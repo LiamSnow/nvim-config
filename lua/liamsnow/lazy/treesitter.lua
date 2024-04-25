@@ -39,6 +39,14 @@ return {
         highlight = {
           enable = true,
           additional_vim_regex_highlighting = { "markdown" },
+          custom_captures = {
+            ["text.title.1.markdown"] = "MarkdownH1",
+            ["text.title.2.markdown"] = "MarkdownH2",
+            ["text.title.3.markdown"] = "MarkdownH3",
+            ["text.title.4.markdown"] = "MarkdownH4",
+            ["text.title.5.markdown"] = "MarkdownH5",
+            ["text.title.6.markdown"] = "MarkdownH6",
+          },
         },
         indent = { enable = true },
       })
