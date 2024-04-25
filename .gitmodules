@@ -1,0 +1,3 @@
+[submodule "peek.nvim"]
+	path = peek.nvim
+	url = https://github.com/LiamSnow/peek.nvim.git
