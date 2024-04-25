@@ -30,7 +30,21 @@ return {
           "lua_ls",
           "rust_analyzer",
           "gopls",
-          "pyright"
+          "pyright",
+          "cssls",
+          "html",
+          "biome", -- ts, js
+          "zls", -- zig
+          "yamlls",
+          "matlab_ls",
+          "svls", -- sys verilog
+          "dockerls",
+          "denols",
+          "texlab",
+          "clangd",
+          "cmake",
+          "arduino_language_server",
+          "marksman" -- md
         },
         handlers = {
           function(server_name) -- default handler (optional)
