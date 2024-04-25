@@ -31,7 +31,7 @@ autocmd({ "BufWritePre" }, {
 autocmd({ "FileType" }, {
   group = LiamSnowGroup,
   pattern = { "markdown", "md" },
-  command = "setlocal wrap",
+  command = "setlocal wrap linebreak",
 })
 
 

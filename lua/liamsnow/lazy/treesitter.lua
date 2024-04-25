@@ -33,6 +33,7 @@ return {
           "xml",
           "zig",
           "yaml",
+          "latex"
         },
         sync_install = false,
         auto_insall = true,
