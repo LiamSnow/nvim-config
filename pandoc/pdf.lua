@@ -19,7 +19,7 @@ function Header(el)
             isCurrentSectionUnnumbered = false
             return pandoc.RawBlock('latex', '\\newpage\n\\section{' .. pandoc.utils.stringify(el.content) .. '}')
         end
-    elseif el.level == 4 then
+    elseif el.level == 3 then
         -- H4
         if hasAsterick or isCurrentSectionUnnumbered then
             -- Unnumbered Subsections

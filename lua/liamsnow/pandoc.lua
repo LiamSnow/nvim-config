@@ -39,8 +39,8 @@ local function pandoc_run()
     cwd = vim.loop.cwd(),
     on_exit = function(response, exit_code)
       if (exit_code ~= 0) then
-        print("Pandoc run failed!",
-          exit_code, table.concat(response:result(), "\n"))
+        local error_message = table.concat(response:stderr_result(), "\n")
+        print("Pandoc run failed!", exit_code, error_message)
       else
         print("Pandoc output to", output_file)
       end
@@ -68,5 +68,5 @@ vim.api.nvim_create_user_command("PandocRun", pandoc_run, {})
 vim.api.nvim_create_user_command("PandocView", pandoc_view, {})
 
 vim.keymap.set("n", "<C-p>", pandoc_run)
-vim.keymap.set("n", "<leader><S-P>", pandoc_view)
+vim.keymap.set("n", "<leader><C-p>", pandoc_view)
 
