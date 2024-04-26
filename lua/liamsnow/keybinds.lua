@@ -1,8 +1,8 @@
--- Define the path to your cheatsheet file
-local cheatsheet_file = vim.fn.stdpath('config') .. "/Cheatsheet.md"
+-- Define the path to your keybinds file
+local keybinds_file = vim.fn.stdpath('config') .. "/KEYBINDS.md"
 
--- Create a custom command ':cheat'
-vim.api.nvim_create_user_command('Cheat', function()
+-- Create a custom command ':Key'
+vim.api.nvim_create_user_command('Key', function()
   -- Get the current window dimensions
   local width = vim.api.nvim_get_option("columns")
   local height = vim.api.nvim_get_option("lines")
@@ -31,8 +31,8 @@ vim.api.nvim_create_user_command('Cheat', function()
   vim.api.nvim_win_set_option(win, "cursorline", true)
   vim.api.nvim_win_set_option(win, "conceallevel", 2)
 
-  -- Read the contents of the cheatsheet file into the buffer
-  vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.fn.readfile(cheatsheet_file))
+  -- Read the contents of the keybinds file into the buffer
+  vim.api.nvim_buf_set_lines(buf, 0, -1, false, vim.fn.readfile(keybinds_file))
 
   -- Set the buffer to be read-only
   vim.api.nvim_buf_set_option(buf, "modifiable", false)

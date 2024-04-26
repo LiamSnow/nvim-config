@@ -3,12 +3,6 @@
 Increment Number: `<C-a>` (opposite for strings)
 Decrement Number: `<C-x>` (opposite for strings)
 
-Window Management: `<C-w>`
- - Switch: vim movement
- - Close Others: `o`
- - Equal Size: =
-Split: `:sp[lit]`, `:vs[plit]`
-
 Text Objects:
  - Inner Word: `iw` (→ change is word:`ciw`)
  - Around Word: `aw`
@@ -43,6 +37,11 @@ Quick Fix List: `<C-k>`, `<C-j>`, `<leader>k`, `<leader>j`
 Find/Replace Current Word: `<leader>s`
 
 Chmod Bash File: `<leader>x`
+
+Window Management:
+ - Switch: `<A-h|k|k|l>`
+ - V-Split: `<A-v>`
+ - Resize: `<A-S-h|k|k|l>`
 
 ### LSP
 Go to Definition: `gd`
