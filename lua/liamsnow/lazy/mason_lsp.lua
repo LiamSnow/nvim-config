@@ -4,26 +4,18 @@ return {
     dependencies = {
       "williamboman/mason.nvim",
       "williamboman/mason-lspconfig.nvim",
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "hrsh7th/cmp-cmdline",
-      "hrsh7th/nvim-cmp",
-      "L3MON4D3/LuaSnip",
-      "saadparwaiz1/cmp_luasnip",
       "j-hui/fidget.nvim",
+      "hrsh7th/cmp-nvim-lsp",
     },
 
     config = function()
-      local cmp = require('cmp')
-      local cmp_lsp = require("cmp_nvim_lsp")
       local capabilities = vim.tbl_deep_extend(
         "force",
         {},
         vim.lsp.protocol.make_client_capabilities(),
-        cmp_lsp.default_capabilities())
+        require("cmp_nvim_lsp").default_capabilities())
 
-      require("fidget").setup({})
+      require("fidget").setup()
       require("mason").setup()
       require("mason-lspconfig").setup({
         ensure_installed = {
@@ -34,7 +26,7 @@ return {
           "cssls",
           "html",
           "biome", -- ts, js
-          "zls", -- zig
+          "zls",   -- zig
           "yamlls",
           "matlab_ls",
           "svls", -- sys verilog
@@ -44,7 +36,7 @@ return {
           "clangd",
           "cmake",
           "arduino_language_server",
-          "marksman" -- md
+          "marksman", -- md
         },
         handlers = {
           function(server_name) -- default handler (optional)
@@ -95,40 +87,6 @@ return {
             }
           end
         }
-      })
-
-      local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
-      cmp.setup({
-        snippet = {
-          expand = function(args)
-            require('luasnip').lsp_expand(args.body)
-          end,
-        },
-        mapping = cmp.mapping.preset.insert({
-          ['<A-,>'] = cmp.mapping.select_prev_item(cmp_select),
-          ['<A-.>'] = cmp.mapping.select_next_item(cmp_select),
-          ['<C-.>'] = cmp.mapping.confirm({ select = true }),
-          ["<C-/>"] = cmp.mapping.complete(),
-        }),
-        sources = cmp.config.sources({
-          { name = 'nvim_lsp' },
-          { name = 'luasnip' },
-        }, {
-          { name = 'buffer' },
-        })
-      })
-
-      vim.diagnostic.config({
-        -- update_in_insert = true,
-        float = {
-          focusable = false,
-          style = "minimal",
-          border = "rounded",
-          source = "always",
-          header = "",
-          prefix = "",
-        },
       })
     end
   }

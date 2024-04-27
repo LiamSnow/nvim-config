@@ -19,6 +19,12 @@ Jump to Mark: `'[a-zA-Z]`
 
 Delete to EOL: `D`
 
+Change Case: `gu`, `gU`
+
+Reselect (:star:): `gv`
+
+Join Lines: `J` (join space), `gJ` (join nothing)
+
 ### General
 Open Here: `nvim .`
 Close: `:wqa`
@@ -46,11 +52,11 @@ Window Management:
 ### LSP
 Go to Definition: `gd`
 Show Hover Information: `K`
-Find Workspace Symbol: `<leader>vws`
+Find Workspace Symbol: `<leader>ws`
 Open Diagnostics Float: `<leader>vd`
-Code Action: `<leader>vca`
-Find References: `<leader>vrr`
-Rename Symbol: `<leader>vrn`
+Code Action: `<leader>ca`
+Find References: `<leader>gr`
+Rename Symbol: `<leader>rn`
 Signature Help (Insert Mode): `<C-h>`
 Go to Next Diagnostic: `[d`
 Go to Previous Diagnostic: `]d`
@@ -64,6 +70,11 @@ Rename Variable: `<leader>rn` (`inc-rename.nvim`)
 
 ### LazyGit
 Open: `<leader>lg`
+
+### Trouble
+Start: `<leader>t`
+Next: `[t`
+Past: `]t`
 
 ### Harpoon
 Add to List: `<A-a`
@@ -145,5 +156,12 @@ Close All: `zM`
 Open Folds Expect Kinds: `zr`
 Close Fold With: `zm`
 
+### Sneak
+Base: `s{char}{char}`
+Navigate:
+ - Next: `;`
+ - Past: `,`
+ - Start: `<C-o>` or `\`\``
 
 ### Neo-Tree
+Help: `?`

@@ -30,6 +30,7 @@ vim.opt.conceallevel = 0
 
 -- shell
 vim.opt.shell = "zsh"
+-- vim.opt.shellcmdflag = "-ic"
 
 -- leader
 vim.g.mapleader = " "
