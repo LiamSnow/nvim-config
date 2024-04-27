@@ -1,5 +1,7 @@
-import anthropic
 import os
+
+import anthropic
+
 
 def read_api_key(key):
     file_path = os.path.join(os.path.expanduser("~"), "." + key)
@@ -9,6 +11,7 @@ def read_api_key(key):
             return content
     except FileNotFoundError:
         return ""
+
 
 anthropic_key = read_api_key("anthropic")
 openai_key = read_api_key("openai")
@@ -22,5 +25,5 @@ with client.messages.stream(
     messages=[{"role": "user", "content": "Write hello world in java"}],
     model="claude-3-opus-20240229",
 ) as stream:
-  for text in stream.text_stream:
-      print(text, end="", flush=True)
+    for text in stream.text_stream:
+        print(text, end="", flush=True)
