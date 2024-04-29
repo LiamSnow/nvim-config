@@ -17,6 +17,14 @@ vim.opt.undofile = true
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
+-- DISABLE THE MOUSE!!!!!!!!!!!!!!!
+vim.opt.mouse = ""
+vim.opt.mousescroll = "ver:0,hor:0"
+vim.keymap.set("", "<up>", "<nop>", { noremap = true })
+vim.keymap.set("", "<down>", "<nop>", { noremap = true })
+vim.keymap.set("i", "<up>", "<nop>", { noremap = true })
+vim.keymap.set("i", "<down>", "<nop>", { noremap = true })
+
 -- other
 vim.opt.wrap = false
 vim.opt.swapfile = false

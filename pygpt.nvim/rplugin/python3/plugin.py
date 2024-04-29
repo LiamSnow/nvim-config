@@ -35,6 +35,19 @@ class PyGPT(object):
         self.setActiveChat(self.makeNewChat())
         self.open(_, range)
 
+    @pynvim.command("PyGPTToggle", nargs='*', range="")
+    def toggle(self, _, range):
+        current_file = self.nvim.current.buffer.name
+        active_chat = self.getActiveChat()
+
+        # already in chat -> go back
+        if current_file == active_chat:
+            alternate_buffer = self.nvim.funcs.bufnr('#')
+            self.nvim.current.buffer = self.nvim.buffers[alternate_buffer]
+        # open chat
+        else:
+            self.open(_, range)
+
     @pynvim.command("PyGPTOpen", nargs='*', range="")
     def open(self, _, range):
         active_chat = self.getActiveChat()
@@ -43,10 +56,10 @@ class PyGPT(object):
         if (range[0] != range[1]):
             bufnr = self.nvim.current.buffer
             selected_content = "\n".join(bufnr[range[0]-1:range[1]])
-            with open(active_chat, 'a') as file:
-                file.write('\n' + selected_content + '\n')
-
-        self.openFile(active_chat)
+            self.openFile(active_chat, f"\n{selected_content}\n")
+        # open normally
+        else:
+            self.openFile(active_chat)
 
     @pynvim.command("PyGPTRun", nargs='*', range="")
     def run(self, _, range):
@@ -148,7 +161,7 @@ class PyGPT(object):
 
     def makeNewChat(self):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        chat_file = f"{self.getChatDir()}/chat_{timestamp}.md"
+        chat_file = f"{self.getChatDir()}chat_{timestamp}.md"
         os.makedirs(os.path.dirname(chat_file), exist_ok=True)
         with open(chat_file, "w") as file:
             # Add markdown frontmatter
@@ -158,7 +171,7 @@ class PyGPT(object):
             file.write("---\n\n\n")
         return chat_file
 
-    def openFile(self, file_path):
+    def openFile(self, file_path, content=None):
         self.nvim.command(":TSContextDisable")
         if self.nvim.funcs.bufloaded(file_path):
             buf_handle = self.nvim.funcs.bufnr(file_path)
@@ -167,3 +180,13 @@ class PyGPT(object):
             self.nvim.funcs.bufload(buf_handle)
         self.nvim.api.set_current_buf(buf_handle)
         self.nvim.api.buf_set_option(buf_handle, "buflisted", True)
+
+        # paste content to bottom
+        if content is not None:
+            num_lines = len(self.nvim.api.buf_get_lines(buf_handle, 0, -1, True))
+            lines = content.split("\n")
+            self.nvim.api.buf_set_lines(buf_handle, num_lines, num_lines, True, lines)
+
+        # scroll to bottom of page
+        num_lines = len(self.nvim.api.buf_get_lines(buf_handle, 0, -1, True))
+        self.nvim.funcs.nvim_win_set_cursor(0, [num_lines, 0])
