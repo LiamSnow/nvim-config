@@ -10,7 +10,7 @@ return {
       conform.setup({
         formatters_by_ft = {
           lua = { "stylua" },
-          python = { "isort", "black" },
+          python = { "black" },
           javascript = { { "prettierd", "prettier" } }, -- sub-list runs first available
           typescript = { { "prettierd", "prettier" } },
           svelte = { { "prettierd", "prettier" } },
@@ -33,7 +33,6 @@ return {
       require("mason-tool-installer").setup({
         ensure_installed = {
           "stylua",
-          "isort",
           "black",
           "prettierd",
           "prettier",

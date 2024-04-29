@@ -68,9 +68,6 @@ Trigger Autocompletion: `<C-/>`
 
 Rename Variable: `<leader>rn` (`inc-rename.nvim`)
 
-### LazyGit
-Open: `<leader>lg`
-
 ### Trouble
 Start: `<leader>t`
 Next: `[t`
@@ -165,3 +162,13 @@ Navigate:
 
 ### Neo-Tree
 Help: `?`
+
+### Fugitive
+Open: `<A-g>`
+Push: `<leader>p`
+Pull: `<leader>P`
+View Changes: `=`
+Stage: `s`
+
+
+

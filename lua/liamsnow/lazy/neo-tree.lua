@@ -38,7 +38,7 @@ return {
       })
 
       vim.keymap.set('n', '<leader>e', ':Neotree<CR>')
-      vim.keymap.set('n', '<leader><S-e>', ':Neotree close<CR>')
+      vim.keymap.set('n', '<leader><S-e>', ':Neotree toggle<CR>')
     end
   }
 }
