@@ -4,6 +4,32 @@ import datetime
 import os
 import re
 
+file_extension_to_markdown_map = {
+    "py":  "python",
+    "rs":  "rust",
+    "js":  "javascript",
+    "java": "java",
+    "c":   "c",
+    "cs":  "csharp",
+    "cpp": "cpp",
+    "go":  "go",
+    "php": "php",
+    "rb":  "ruby",
+    "ts":  "typescript",
+    "kt":  "kotlin",
+    "m":   "matlab",
+    "lua": "lua",
+    "sql": "sql",
+    "sh":  "bash",
+    "html": "html",
+    "css": "css",
+    "scss": "scss",
+    "xml": "xml",
+    "json": "json",
+    "yml": "yaml",
+    "zig": "zig"
+}
+
 @pynvim.plugin
 class PyGPT(object):
     nvim: pynvim.Nvim
@@ -56,6 +82,14 @@ class PyGPT(object):
         if (range[0] != range[1]):
             bufnr = self.nvim.current.buffer
             selected_content = "\n".join(bufnr[range[0]-1:range[1]])
+
+            # add markdown code block
+            _, file_extension = os.path.splitext(bufnr.name)
+            file_extension = file_extension.lstrip('.')
+            if file_extension in file_extension_to_markdown_map:
+                language = file_extension_to_markdown_map[file_extension]
+                selected_content = f"```{language}\n{selected_content}\n```"
+
             self.openFile(active_chat, f"\n{selected_content}\n")
         # open normally
         else:
