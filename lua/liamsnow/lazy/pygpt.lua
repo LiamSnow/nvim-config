@@ -24,7 +24,7 @@ return {
 				anthropic_key = anthropic_key,
 				openai_key = openai_key,
         default_params = {
-          temperature = 1,
+          temperature = 0.2,
           max_tokens = 1024,
           system = "You are a professional AI assistant. Format all responses in Markdown. Use Mathjax for math."
         }
