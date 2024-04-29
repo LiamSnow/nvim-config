@@ -38,7 +38,7 @@ Yank to System: `<A-y>`, `<A-Y>`
 
 Format Selection: `<leader>f`
 
-Quick Fix List: `<C-k>`, `<C-j>`, `<leader>k`, `<leader>j`
+xx Quick Fix List: `<C-k>`, `<C-j>`, `<leader>k`, `<leader>j`
 
 Find/Replace Current Word: `<leader>s`
 

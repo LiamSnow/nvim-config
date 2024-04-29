@@ -30,22 +30,33 @@ class PyGPT(object):
         cfg = self.nvim.exec_lua('return require("pygpt").getConfig()')
         self.config.update(cfg)
 
-    @pynvim.command("PyGPTNew")
-    def new(self):
+    @pynvim.command("PyGPTNew", nargs='*', range="")
+    def new(self, _, range):
         self.setActiveChat(self.makeNewChat())
-        self.open()
+        self.open(_, range)
 
-    @pynvim.command("PyGPTOpen")
-    def open(self):
-        self.openFile(self.getActiveChat())
+    @pynvim.command("PyGPTOpen", nargs='*', range="")
+    def open(self, _, range):
+        active_chat = self.getActiveChat()
+
+        # append selection to end of chat
+        if (range[0] != range[1]):
+            bufnr = self.nvim.current.buffer
+            selected_content = "\n".join(bufnr[range[0]-1:range[1]])
+            with open(active_chat, 'a') as file:
+                file.write('\n' + selected_content + '\n')
+
+        self.openFile(active_chat)
 
     @pynvim.command("PyGPTRun", nargs='*', range="")
     def run(self, _, range):
         bufnr = self.nvim.current.buffer
-        self.setActiveChat(bufnr.name)
         start_line = range[0] - 1
         end_line = range[1]
         selected_content = "\n".join(bufnr[start_line:end_line])
+
+        if (bufnr.name.startswith(self.getChatDir())):
+            self.setActiveChat(bufnr.name)
 
         params = self.readFrontMatter(bufnr)
 
@@ -94,13 +105,14 @@ class PyGPT(object):
 
     @pynvim.command("PyGPTExplorer")
     def explorer(self):
-        self.nvim.command(f"Neotree {self.config['chat_dir']}")
+        self.nvim.command(f"Neotree {self.getChatDir()}")
 
     def readFrontMatter(self, bufnr):
         default = self.config['default_params']
 
         content = "\n".join(bufnr[:])
         frontmatter_match = re.search(r"^---\n(.*?)\n---", content, re.DOTALL)
+        temperature_match = max_tokens_match = system_match = False
         if frontmatter_match:
             frontmatter = frontmatter_match.group(1)
             temperature_match = re.search(r"temperature:\s*(\d+\.?\d*)", frontmatter)
@@ -119,8 +131,11 @@ class PyGPT(object):
     def getActiveChat(self):
         return self.nvim.api.get_var("pygpt_active_chat")
 
+    def getChatDir(self):
+        return os.path.expanduser(self.config['chat_dir'])
+
     def initActiveChat(self):
-        chat_dir = os.path.expanduser(self.config['chat_dir'])
+        chat_dir = self.getChatDir()
         os.makedirs(chat_dir, exist_ok=True)
         last_chat = ""
         chat_files = [f for f in os.listdir(chat_dir) if f.endswith(".md")]
@@ -133,7 +148,7 @@ class PyGPT(object):
 
     def makeNewChat(self):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        chat_file = os.path.expanduser(f"{self.config['chat_dir']}/chat_{timestamp}.md")
+        chat_file = f"{self.getChatDir()}/chat_{timestamp}.md"
         os.makedirs(os.path.dirname(chat_file), exist_ok=True)
         with open(chat_file, "w") as file:
             # Add markdown frontmatter

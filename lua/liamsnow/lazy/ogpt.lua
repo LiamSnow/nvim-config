@@ -76,7 +76,7 @@ return {
       "nvim-telescope/telescope.nvim"
     },
     keys = {
-      { "<C-=>", "<cmd>OGPT<cr>", desc = "Open OGPT" },
+      -- { "<C-=>", "<cmd>OGPT<cr>", desc = "Open OGPT" },
     },
     init = function()
     end
