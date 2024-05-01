@@ -53,12 +53,13 @@ return {
       })
     end
   },
-  {
-    "nvim-treesitter/nvim-treesitter-context",
-    config = function()
-      require('treesitter-context').setup({
-        enable = true,
-      })
-    end
-  }
+  -- Has been causing lots of random issues -- disabling for now
+  -- {
+  --   "nvim-treesitter/nvim-treesitter-context",
+  --   config = function()
+  --     require('treesitter-context').setup({
+  --       enable = true,
+  --     })
+  --   end
+  -- }
 }

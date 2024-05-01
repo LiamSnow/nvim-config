@@ -27,7 +27,8 @@ file_extension_to_markdown_map = {
     "xml": "xml",
     "json": "json",
     "yml": "yaml",
-    "zig": "zig"
+    "zig": "zig",
+    "toml": "toml"
 }
 
 @pynvim.plugin
@@ -206,7 +207,7 @@ class PyGPT(object):
         return chat_file
 
     def openFile(self, file_path, content=None):
-        self.nvim.command(":TSContextDisable")
+        # self.nvim.command(":TSContextDisable")
         if self.nvim.funcs.bufloaded(file_path):
             buf_handle = self.nvim.funcs.bufnr(file_path)
         else:
