@@ -17,7 +17,10 @@ vim.opt.undofile = true
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
--- DISABLE THE MOUSE!!!!!!!!!!!!!!!
+-- mouse
+vim.api.nvim_set_keymap('', '<LeftMouse>', '<Nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('', '<RightMouse>', '<Nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('', '<2-LeftMouse>', '<Nop>', { noremap = true, silent = true })
 -- vim.opt.mouse = ""
 -- vim.opt.mousescroll = "ver:0,hor:0"
 -- vim.keymap.set("", "<up>", "<nop>", { noremap = true })
