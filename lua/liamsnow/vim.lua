@@ -17,17 +17,6 @@ vim.opt.undofile = true
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
 
--- mouse
-vim.api.nvim_set_keymap('', '<LeftMouse>', '<Nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('', '<RightMouse>', '<Nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('', '<2-LeftMouse>', '<Nop>', { noremap = true, silent = true })
--- vim.opt.mouse = ""
--- vim.opt.mousescroll = "ver:0,hor:0"
--- vim.keymap.set("", "<up>", "<nop>", { noremap = true })
--- vim.keymap.set("", "<down>", "<nop>", { noremap = true })
--- vim.keymap.set("i", "<up>", "<nop>", { noremap = true })
--- vim.keymap.set("i", "<down>", "<nop>", { noremap = true })
-
 -- other
 vim.opt.wrap = false
 vim.opt.swapfile = false
@@ -45,6 +34,14 @@ vim.opt.shell = "zsh"
 
 -- leader
 vim.g.mapleader = " "
+
+-- im dumb
+vim.api.nvim_create_user_command('W', 'w', {})
+
+-- mouse
+vim.api.nvim_set_keymap('', '<LeftMouse>', '<Nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('', '<RightMouse>', '<Nop>', { noremap = true, silent = true })
+vim.api.nvim_set_keymap('', '<2-LeftMouse>', '<Nop>', { noremap = true, silent = true })
 
 -- better split window navigation
 vim.keymap.set("n", "<A-v>", ":vsplit<CR>")

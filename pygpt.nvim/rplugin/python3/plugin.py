@@ -43,6 +43,7 @@ class PyGPT(object):
         )
         self.initActiveChat()
         self.stream_cancelled = False
+        self.buffer_count = 0
 
     def readConfig(self):
         self.config = {
@@ -215,6 +216,7 @@ class PyGPT(object):
             self.nvim.funcs.bufload(buf_handle)
         self.nvim.api.set_current_buf(buf_handle)
         self.nvim.api.buf_set_option(buf_handle, "buflisted", True)
+        self.nvim.api.buf_set_var(buf_handle, 'pynvim', True)
 
         # paste content to bottom
         if content is not None:

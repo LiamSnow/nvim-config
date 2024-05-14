@@ -21,6 +21,7 @@ return {
 					end, opts)
 
 					vim.keymap.set("n", "<leader>P", function()
+            -- rebase on top 🙌
 						vim.cmd.Git({ "pull", "--rebase" })
 					end, opts)
 				end,
