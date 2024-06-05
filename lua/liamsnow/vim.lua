@@ -13,6 +13,10 @@ vim.opt.smartindent = true
 vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
 vim.opt.undofile = true
 
+-- highlight cursor line
+vim.opt.cursorline = true
+vim.opt.cursorlineopt = "both"
+
 -- search
 vim.opt.hlsearch = false
 vim.opt.incsearch = true

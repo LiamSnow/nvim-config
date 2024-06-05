@@ -25,6 +25,8 @@ Reselect (:star:): `gv`
 
 Join Lines: `J` (join space), `gJ` (join nothing)
 
+`:x` is the same as `:wq`
+
 ### General
 Open Here: `nvim .`
 Close: `:wqa`
