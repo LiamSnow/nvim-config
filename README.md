@@ -170,12 +170,9 @@ a macro I just smile because it actually just so cool.
 
 ## My Setup 👑
 
-The focus of my setup is to have minimal distractions.
-
 ### Philosophy
 
- 1. 1 file in view at a time (ex. file explorer are full screen)
-    - I love this because I can zoom in so much on my file without taking up a ton of my screen
+ 1. Zen/minimal distractions -> 1 file in view at a time (ex. file explorer are full screen)
  2. Load fast
  3. No Sacrifices - If I liked in feature in Obsidian or VSCode
  I will figure out how to get it into neovim
