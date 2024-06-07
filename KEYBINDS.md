@@ -96,29 +96,6 @@ Past: `]t`
 ### Undo Tree
 Toggle: `<leader>u`
 
-### OGPT
-Open/Close: `<leader>c`
-Yank Last: `<C-y>`
-Yank Last Code: `<C-i>`
-New Session: `<C-n>`
-Cycle Windows: `<Tab>`
-Cycle Modes: `<C-f>`
-Next Message: `J`
-Prev Message: `K`
-Select Session: `Enter`
-Rename Session: `r`
-Delete Session: `d`
-Edit Message: `e`
-Parameters: `<C-p>`
-Message Role: `<C-r>`
-System Role: `<C-s>`
-Stop Generating: `<C-x>`
-
-### Knap
-Start HTML: `<leader>kh`
-Start PDF: `<leader>kp`
-Stop: `<leader>kk` (also stops when neovim quits)
-
 ### Surround
 Visual Mode: `S` + replacement char
 ```
