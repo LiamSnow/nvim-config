@@ -174,32 +174,30 @@ The focus of my setup is to have minimal distractions.
 
 ### Philosophy
 
- 1. I only want to see 1 file at a time (ex. file explorer are full screen)
+ 1. 1 file in view at a time (ex. file explorer are full screen)
+    - I love this because I can zoom in so much on my file without taking up a ton of my screen
+ 2. Load fast
+ 3. No Sacrifices - If I liked in feature in Obsidian or VSCode
+ I will figure out how to get it into neovim
+ 4. Quickly move between files (`harpoon` + `telescope` is goated)
+ 5. No mouse (its _mostly_ disabled)
 
 ### Packages
 
-__Package Manager__: `Lazy`
-__Git__: `Fugitive`
-__LSP__: `nvim-lspconfig + Mason`
-__Formatter__: `conform.nvim`
-__Linter__: `nvim-lint`
-__Status Bar__: `lualine`
-__File Explorer__: `neo-tree` (although usually I will use yazi externally)
-__Markdown Preview__: `peek.nvim` (my forked version)
-__File Search__: `telescope`
-__Quick Switcher__: `harpoon` (basically simulated tabs, but better)
-__Theme__: `nightfox` (with no/black background)
-__AI__: `pygpt` I didn't like any other implementations so I wrote my own plugin
-to interact with the Python Anthropic API (written in python
-because the API is and you shouldn't be converting their API to Lua because
-then you have to maintain it all the time). Uses full buffers/pages
-instead of floating. Honestly, I used to use GPT models to code/ask questions
-a lot, but now I am a big advocate of not doing that. Hallucinations are a big
-issues, you can become to reliant on it, and RTFM (`man` is your friend).
-If I need something quick or can't find an answer, I will put up with snarky
-people on StackOverflow because they are actually smart (-er than GPT models).
+ - __Package Manager__: `Lazy`
+ - __Git__: `Fugitive`
+ - __LSP__: `nvim-lspconfig + Mason`
+ - __Formatter__: `conform.nvim`
+ - __Linter__: `nvim-lint`
+ - __Status Bar__: `lualine`
+ - __File Explorer__: `neo-tree` (although usually I will use yazi externally)
+ - __Markdown Preview__: `peek.nvim` (my forked version)
+ - __File Search__: `telescope`
+ - __Quick Switcher__: `harpoon` (basically simulated tabs, but better)
+ - __Theme__: `nightfox` (with no/black background)
+ - __AI__: `pygpt` I didn't like any other implementations so I wrote my own plugin to interact with the Python Anthropic API (written in python because the API is and you shouldn't be converting their API to Lua because then you have to maintain it all the time). Uses full buffers/pages instead of floating. Honestly, I used to use GPT models to code/ask questions a lot, but now I am a big advocate of not doing that. Hallucinations are a big issues, you can become to reliant on it, and RTFM (`man` is your friend). If I need something quick or can't find an answer, I will put up with snarky people on StackOverflow because they are actually smart (-er than GPT models).
 
-__Other Useful__:
- - `undotree`: View your entire undo tree/history, even from past sessions
- - `inc-rename`: Rename all occurances of variable
- - `comment.nvim`: Easily comment/uncomment selection
+ - __Other Useful__:
+     - `undotree`: View your entire undo tree/history, even from past sessions
+     - `inc-rename`: Rename all occurances of variable
+     - `comment.nvim`: Easily comment/uncomment selection
