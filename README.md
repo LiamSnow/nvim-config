@@ -100,9 +100,6 @@ me start to hate the program as a whole. I needed to find an alternative.
 
 ### Switching to Neovim 😎
 
-TL;DR Vim keybinds are cool & fast. Vim mode in VSCode & Obsidian
-sucks. Neovim is hard to setup but worth it. I love Neovim.
-
 I always envied people who used Vim. It was so fast and just looked
 like black magic. I had attempted to learn multiple times, but
 always had issues sticking with it because of its steep learning
@@ -141,11 +138,9 @@ is because I love it. The bottom line in my opinion, is that you
 should love your editor. It will make you want to code, and enjoy
 the hours that do you spend coding.
 
-### "Vim keybinds aren't that much faster" 🤓
+### "Vim keybinds aren't that much faster"
 
-TL;DR Yes they are.
-
-Trust me, I used to be this guy. I used to always think that
+Trust me, I used to think the same way. I always thought that
 my limiting factor was how fast I could think and not my ability to manipulate
 text quickly - its not (probably).
 
@@ -192,7 +187,8 @@ a macro I just smile because it actually just so cool.
  - __File Search__: `telescope`
  - __Quick Switcher__: `harpoon` (basically simulated tabs, but better)
  - __Theme__: `nightfox` (with no/black background)
- - __AI__: `pygpt` I didn't like any other implementations so I wrote my own plugin to interact with the Python Anthropic API (written in python because the API is and you shouldn't be converting their API to Lua because then you have to maintain it all the time). Uses full buffers/pages instead of floating. Honestly, I used to use GPT models to code/ask questions a lot, but now I am a big advocate of not doing that. Hallucinations are a big issues, you can become to reliant on it, and RTFM (`man` is your friend). If I need something quick or can't find an answer, I will put up with snarky people on StackOverflow because they are actually smart (-er than GPT models).
+ - __AI__: `pygpt` I didn't like any other implementations so I wrote my own plugin to interact with the Python Anthropic API (written in python because the API is and you shouldn't be converting their API to Lua because then you have to maintain it all the time). Uses full buffers/pages instead of floating.
+    - \*UPDATE: I have basically stopped using GPT models to code entirely. Hallucinations are a big issue, you can become too reliant on them (in the long term actually slowing you down), and honestly just RTFM (`man` is your friend). In almost all cases reading a man page, the wiki, someones blog, or even StackOverflow gives a much better, accurate, and explained answer.
 
  - __Other Useful__:
      - `undotree`: View your entire undo tree/history, even from past sessions
