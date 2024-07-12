@@ -118,7 +118,7 @@ class PyGPT(object):
                 messages=[
                     {"role": "user", "content": selected_content}
                 ],
-                model="claude-3-opus-20240229",
+                model="claude-3-5-sonnet-20240620",
             ) as stream:
                 # add blank line
                 bufnr.append("", end_line)

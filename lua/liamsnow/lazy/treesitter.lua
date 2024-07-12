@@ -33,7 +33,8 @@ return {
           "xml",
           "zig",
           "yaml",
-          "latex"
+          "latex",
+          "terraform"
         },
         sync_install = false,
         auto_insall = true,

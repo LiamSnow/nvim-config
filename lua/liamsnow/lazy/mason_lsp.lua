@@ -25,18 +25,20 @@ return {
           "pyright",
           "cssls",
           "html",
-          "biome", -- ts, js
+          -- "biome", -- ts, js
+          "tsserver",
           "zls",   -- zig
           "yamlls",
           "matlab_ls",
           "svls", -- sys verilog
           "dockerls",
-          "denols",
+          -- "denols",
           "texlab",
           "clangd",
           "cmake",
           "arduino_language_server",
           "marksman", -- md
+          "terraformls"
         },
         handlers = {
           function(server_name) -- default handler (optional)
