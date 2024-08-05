@@ -34,7 +34,8 @@ return {
           "zig",
           "yaml",
           "latex",
-          "terraform"
+          "terraform",
+          "swift"
         },
         sync_install = false,
         auto_insall = true,

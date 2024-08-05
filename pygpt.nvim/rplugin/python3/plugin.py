@@ -28,7 +28,8 @@ file_extension_to_markdown_map = {
     "json": "json",
     "yml": "yaml",
     "zig": "zig",
-    "toml": "toml"
+    "toml": "toml",
+    "swift": "swift",
 }
 
 @pynvim.plugin
@@ -126,6 +127,7 @@ class PyGPT(object):
 
                 # add stream line by line to buffer
                 buffer_text = ""
+                buffer_lines = []
                 for text in stream.text_stream:
                     if (self.stream_cancelled):
                         stream.close()
@@ -134,11 +136,17 @@ class PyGPT(object):
                     buffer_text += text
                     if "\n" in text:
                         lines = buffer_text.split("\n")
-                        for line in lines[:-1]:
-                            bufnr.append(line, end_line)
-                            end_line += 1
+                        buffer_lines.extend(lines[:-1])
                         buffer_text = lines[-1]
-                # append remaining
+
+                        if len(buffer_lines) >= 5:
+                            bufnr.append(buffer_lines, end_line)
+                            end_line += len(buffer_lines)
+                            buffer_lines = []
+
+                # append remaining lines
+                if buffer_lines:
+                    bufnr.append(buffer_lines, end_line)
                 if buffer_text:
                     bufnr.append(buffer_text, end_line)
         except anthropic.APIConnectionError as e:
