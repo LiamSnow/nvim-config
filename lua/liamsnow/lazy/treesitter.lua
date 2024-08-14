@@ -35,11 +35,12 @@ return {
           "yaml",
           "latex",
           "terraform",
-          "swift"
+          "swift",
+          "hyprlang"
         },
         sync_install = false,
         auto_insall = true,
-        highlight = {
+         highlight = {
           enable = true,
           additional_vim_regex_highlighting = { "markdown" },
           custom_captures = {

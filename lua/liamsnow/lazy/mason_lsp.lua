@@ -38,7 +38,8 @@ return {
           "cmake",
           "arduino_language_server",
           "marksman", -- md
-          "terraformls"
+          "terraformls",
+          -- "hyprls"
         },
         handlers = {
           function(server_name) -- default handler (optional)
