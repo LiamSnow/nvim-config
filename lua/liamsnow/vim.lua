@@ -43,9 +43,9 @@ vim.g.mapleader = " "
 vim.api.nvim_create_user_command('W', 'w', {})
 
 -- mouse
-vim.api.nvim_set_keymap('', '<LeftMouse>', '<Nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('', '<RightMouse>', '<Nop>', { noremap = true, silent = true })
-vim.api.nvim_set_keymap('', '<2-LeftMouse>', '<Nop>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('', '<LeftMouse>', '<Nop>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('', '<RightMouse>', '<Nop>', { noremap = true, silent = true })
+-- vim.api.nvim_set_keymap('', '<2-LeftMouse>', '<Nop>', { noremap = true, silent = true })
 
 -- better split window navigation
 vim.keymap.set("n", "<A-v>", ":vsplit<CR>")

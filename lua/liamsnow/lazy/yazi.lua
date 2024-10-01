@@ -39,7 +39,7 @@ return {
 			send_to_quickfix_list = "<c-q>",
 		},
 		-- the floating window scaling factor. 1 means 100%, 0.9 means 90%, etc.
-		floating_window_scaling_factor = 1,
+		floating_window_scaling_factor = 0.95,
 
 		-- the transparency of the yazi floating window (0-100). See :h winblend
 		yazi_floating_window_winblend = 0,
@@ -47,6 +47,6 @@ return {
 		-- the type of border to use for the floating window. Can be many values,
 		-- including 'none', 'rounded', 'single', 'double', 'shadow', etc. For
 		-- more information, see :h nvim_open_win
-		yazi_floating_window_border = "none",
+		yazi_floating_window_border = "shadow",
 	},
 }
