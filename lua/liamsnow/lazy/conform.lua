@@ -21,6 +21,7 @@ return {
           rust = { "rustfmt" },
           css = { { "prettierd", "prettier" } },
           scss = { { "prettierd", "prettier" } },
+          rasi = { { "prettierd", "prettier" } },
           go = { "goimports", "gofumpt" },
           -- zig = { "zigfmt" },
           c = { "clang-format" },

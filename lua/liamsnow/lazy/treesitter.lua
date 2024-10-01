@@ -36,7 +36,10 @@ return {
           "latex",
           "terraform",
           "swift",
-          "hyprlang"
+          "hyprlang",
+          "rasi",
+          "glimmer",
+          "templ"
         },
         sync_install = false,
         auto_insall = true,
