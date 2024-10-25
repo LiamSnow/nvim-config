@@ -17,6 +17,9 @@ vim.opt.undofile = true
 vim.opt.cursorline = true
 vim.opt.cursorlineopt = "both"
 
+-- always block cursor
+vim.opt.guicursor = "n-v-i-c:block-Cursor"
+
 -- search
 vim.opt.hlsearch = false
 vim.opt.incsearch = true
@@ -39,8 +42,13 @@ vim.opt.shell = "zsh"
 -- leader
 vim.g.mapleader = " "
 
--- im dumb
+-- mistypes
 vim.api.nvim_create_user_command('W', 'w', {})
+vim.api.nvim_create_user_command('WQ', 'wq', {})
+vim.api.nvim_create_user_command('Wq', 'wq', {})
+vim.api.nvim_create_user_command('Wqa', 'wqa', {})
+vim.api.nvim_create_user_command('WQa', 'wqa', {})
+vim.api.nvim_create_user_command('WQA', 'wqa', {})
 
 -- mouse
 -- vim.api.nvim_set_keymap('', '<LeftMouse>', '<Nop>', { noremap = true, silent = true })

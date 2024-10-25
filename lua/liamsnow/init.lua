@@ -1,7 +1,7 @@
 require("liamsnow.vim")
 require("liamsnow.lazyinit")
 require("liamsnow.pandoc")
-require("liamsnow.keybinds")
+require("liamsnow.cursor")
 
 vim.g.python3_host_prog = "/usr/bin/python3"
 
@@ -73,3 +73,5 @@ autocmd("LspAttach", {
 		end, opts)
 	end,
 })
+
+

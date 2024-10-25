@@ -4,5 +4,8 @@ return {
   },
   {
     'isobit/vim-caddyfile'
+  },
+  {
+    'nvim-lua/plenary.nvim'
   }
 }

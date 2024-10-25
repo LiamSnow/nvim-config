@@ -27,8 +27,9 @@ return {
 					"cssls",
 					"html",
 					-- "biome", -- ts, js
-					"tsserver",
-          -- "denols",
+					-- "tsserver",
+					-- "denols",
+					"svelte",
 					"zls", -- zig
 					"yamlls",
 					"matlab_ls",
@@ -41,8 +42,9 @@ return {
 					"marksman", -- md
 					"terraformls",
 					-- "hyprls"
-					-- "glint",
+					"glint",
 					"templ",
+          "typst_lsp" -- "tinymist"
 				},
 				handlers = {
 					function(server_name) -- default handler (optional)
@@ -100,7 +102,7 @@ return {
 							settings = {
 								["rust-analyzer"] = {
 									cargo = {
-                    -- For Leptos & Dioxus
+										-- For Leptos & Dioxus
 										allFeatures = true,
 										-- loadOutDirsFromCheck = true,
 										-- runBuildScripts = true,
@@ -110,6 +112,13 @@ return {
 									},
 								},
 							},
+						})
+					end,
+
+					["glint"] = function()
+						require("lspconfig").glint.setup({
+							capabilities = capabilities,
+							filetypes = { "handlebars", "glimmer", "hbs" },
 						})
 					end,
 				},

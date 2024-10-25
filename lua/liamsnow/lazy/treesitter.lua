@@ -39,7 +39,9 @@ return {
           "hyprlang",
           "rasi",
           "glimmer",
-          "templ"
+          "templ",
+          "svelte",
+          "typst"
         },
         sync_install = false,
         auto_insall = true,
@@ -56,6 +58,12 @@ return {
           },
         },
         indent = { enable = true },
+      })
+
+      vim.filetype.add({
+        extension = {
+          handlebars = "glimmer",
+        },
       })
     end
   },

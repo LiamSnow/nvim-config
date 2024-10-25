@@ -31,7 +31,8 @@ return {
           toml = { "taplo" },
           xml = { "yq" },
           csv = { "yq" },
-          jsonc = { "deno_fmt" }
+          jsonc = { "deno_fmt" },
+          typst = { "typstyle" }
         },
         formatters = {
           black = {

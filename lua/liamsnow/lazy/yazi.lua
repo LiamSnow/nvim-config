@@ -39,7 +39,7 @@ return {
 			send_to_quickfix_list = "<c-q>",
 		},
 		-- the floating window scaling factor. 1 means 100%, 0.9 means 90%, etc.
-		floating_window_scaling_factor = 0.95,
+		floating_window_scaling_factor = 0.9,
 
 		-- the transparency of the yazi floating window (0-100). See :h winblend
 		yazi_floating_window_winblend = 0,
@@ -47,6 +47,25 @@ return {
 		-- the type of border to use for the floating window. Can be many values,
 		-- including 'none', 'rounded', 'single', 'double', 'shadow', etc. For
 		-- more information, see :h nvim_open_win
-		yazi_floating_window_border = "shadow",
+		yazi_floating_window_border = "none",
+
+		hooks = {
+      -- quit neovim if nothing is left
+			yazi_closed_successfully = function(chosen_file, config, state)
+        if chosen_file then
+          return
+        end
+
+				local buffers = vim.api.nvim_list_bufs()
+				if #buffers <= 2 then
+					local current_buf = vim.api.nvim_get_current_buf()
+					local lines = vim.api.nvim_buf_get_lines(current_buf, 0, -1, false)
+					local is_empty = #lines == 1 and lines[1] == ""
+					if is_empty then
+						vim.cmd("quit")
+					end
+				end
+			end,
+		},
 	},
 }
