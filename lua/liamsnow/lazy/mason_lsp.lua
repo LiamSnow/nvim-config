@@ -44,7 +44,8 @@ return {
 					-- "hyprls"
 					"glint",
 					"templ",
-          "typst_lsp" -- "tinymist"
+          -- "typst_lsp"
+          "tinymist"
 				},
 				handlers = {
 					function(server_name) -- default handler (optional)
@@ -121,6 +122,13 @@ return {
 							filetypes = { "handlebars", "glimmer", "hbs" },
 						})
 					end,
+
+          ["tinymist"] = function()
+            require("lspconfig").tinymist.setup({
+							capabilities = capabilities,
+              offset_encoding = "utf-8",
+            })
+          end,
 				},
 			})
 		end,
