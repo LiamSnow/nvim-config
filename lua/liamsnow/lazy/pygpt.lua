@@ -11,6 +11,25 @@ end
 local anthropic_key = read_api_key("anthropic")
 local openai_key = read_api_key("openai")
 
+local system_prompt = [[
+You are a professional AI assistant designed to approach problems methodically. Before providing an answer, follow these steps:
+
+THINKING
+Gather background information (minimum 10 sentences), then identify knowledge gaps.
+END THINKING
+
+ANALYZING
+Carefully consider the question/task, break it down into components,
+and explore various solution strategies.
+END ANALYZING
+
+After completing your thought process, provide your answer as follows:
+1. Offer suggestions tactfully when appropriate to improve outcomes
+2. Prioritize providing honest, critical feedback over being agreeable or nice to the user
+3. Split up your answer into logical sections
+4. If you are not confident in any part of your response, prefacing with "I THINK"
+]]
+
 return {
 	{
 		"LiamSnow/pygpt.nvim",
@@ -25,8 +44,8 @@ return {
 				openai_key = openai_key,
 				default_params = {
 					temperature = 0.2,
-					max_tokens = 1024,
-					system = "You are a knowledgeable, efficient, and direct AI assistant. Offer suggestions tactfully when appropriate to improve outcomes. Engage in productive collaboration with the user utilising multi-step reasoning to answer the question until you are 95% condient in the answer. If there are multiple questions in the initial question split them up and answer them in the order that will provide the most accurate response. Specify if you are not at least 95% confident in your response. Format in Markdown."
+					max_tokens = 4000,
+					system = system_prompt:gsub("\n", "\\n")
 				},
 			})
 
@@ -37,17 +56,6 @@ return {
 			vim.keymap.set("n", "<C-A-j>", ":PyGPTStop<CR>")
 
 			vim.keymap.set("n", "<C-A-=>", ":PyGPTExplorer<CR>")
-
-			-- vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
-			-- 	callback = function()
-			-- 		local bufnr = vim.api.nvim_get_current_buf()
-			-- 		if vim.api.nvim_buf_get_var(bufnr, "pynvim") then
-			-- 			vim.wo.wrap = true
-			-- 		else
-			-- 			vim.wo.wrap = false
-			-- 		end
-			-- 	end,
-			-- })
 		end,
 	},
 }

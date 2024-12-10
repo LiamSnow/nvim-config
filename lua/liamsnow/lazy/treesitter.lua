@@ -57,7 +57,7 @@ return {
             ["text.title.6.markdown"] = "MarkdownH6",
           },
         },
-        indent = { enable = true },
+        indent = { enable = false },
       })
 
       vim.filetype.add({
