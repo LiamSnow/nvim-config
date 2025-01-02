@@ -159,9 +159,10 @@ def run_perplexity(message, end_line, bufnr, params, model, client, self):
     bufnr.append("<END RESPONSE>", end_line)
     end_line += 1
 
+    bufnr.append("", end_line)
     bufnr.append("<CITATIONS>", end_line+1)
-    end_line += 1
+    end_line += 2
     for i, citation in enumerate(citations):
-        bufnr.append(f" {i}. " + citation, end_line)
+        bufnr.append(f" {i+1}. " + citation, end_line)
         end_line += 1
     bufnr.append("<END CITATIONS>", end_line)
