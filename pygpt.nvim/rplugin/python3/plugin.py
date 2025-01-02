@@ -1,5 +1,3 @@
-# import anthropic
-from openai import OpenAI
 import pynvim
 import datetime
 import os
@@ -58,8 +56,12 @@ class PyGPT(object):
             "defaults": {
                 "temperature": 0.2,
                 "max_tokens": 1024,
-                "system": "",
-                "client": "anthropic",
+                "system": {
+                    "anthropic": "",
+                    "openai": "",
+                    "perplexity": "",
+                    "deepseek": "",
+                }
             },
             "models": {
                 "anthropic": "claude-3-5-sonnet-20240620",
@@ -71,10 +73,13 @@ class PyGPT(object):
         cfg = self.nvim.exec_lua('return require("pygpt").getConfig()')
         self.config.update(cfg)
 
-    @pynvim.command("PyGPTNew", nargs='*', range="")
-    def new(self, _, range):
-        self.setActiveChat(self.makeNewChat())
-        self.open(_, range)
+    @pynvim.command("PyGPTNew", nargs=1, range="")
+    def new(self, args, range):
+        if len(args) < 1:
+            print("Must provide model as argument!")
+            return
+        self.setActiveChat(self.makeNewChat(args[0]))
+        self.open(None, range)
 
     @pynvim.command("PyGPTToggle", nargs='*', range="")
     def toggle(self, _, range):
@@ -146,7 +151,7 @@ class PyGPT(object):
             "temperature": float(temperature_match.group(1)) if temperature_match else defaults['temperature'],
             "max_tokens": int(max_tokens_match.group(1)) if max_tokens_match else defaults['max_tokens'],
             "system": system_match.group(1).strip() if system_match else defaults['system'],
-            "client": client_match.group(1).strip() if client_match else defaults['client']
+            "client": client_match.group(1).strip() if client_match else ""
         };
 
     def setActiveChat(self, chat):
@@ -170,15 +175,18 @@ class PyGPT(object):
             last_chat = self.makeNewChat()
         self.setActiveChat(last_chat)
 
-    def makeNewChat(self):
+    def makeNewChat(self, client):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         chat_file = f"{self.getChatDir()}chat_{timestamp}.md"
         os.makedirs(os.path.dirname(chat_file), exist_ok=True)
         with open(chat_file, "w") as file:
             # Add markdown frontmatter
             file.write("---\n")
-            for key, value in self.config['defaults'].items():
-                file.write(f"{key}: {value}\n")
+            defaults = self.config['defaults']
+            file.write(f"system: {defaults['system'][client]}\n")
+            file.write(f"client: {client}\n")
+            file.write(f"temperature: {defaults['temperature']}\n")
+            file.write(f"max_tokens: {defaults['max_tokens']}\n")
             file.write("---\n\n\n")
         return chat_file
 

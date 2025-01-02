@@ -50,6 +50,9 @@ return {
 					return path_of_buffer
 				end,
 			})
+
+			vim.keymap.set("n", "<leader><l>", ":TypstPreview")
+			vim.keymap.set("n", "<leader><S-l>", ":TypstPreviewStop")
 		end,
 	},
 }

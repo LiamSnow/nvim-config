@@ -20,7 +20,7 @@ def run(message, end_line, bufnr, params, self):
         case "deepseek":
             run_openai(message, end_line, bufnr, params, self.config['models']['deepseek'], self.clients['deepseek'], self)
         case _:
-            bufnr.append("Invalid client")
+            bufnr.append(f"Invalid client: {params['client']}")
 
 def run_anthropic(message, end_line, bufnr, params, model, client, self):
     try:

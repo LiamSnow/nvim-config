@@ -27,6 +27,12 @@ After completing your thought process, provide your answer as follows:
 4. If you are not confident in any part of your response, prefacing with "I THINK"
 ]]
 
+local perplexity_system_prompt = [[
+You are a helpful search assistant.
+
+Your task is to deliver a concise and accurate response to a user's query, drawing from the given search results. Your answer must be precise, of high-quality, and written by an expert using an unbiased and journalistic tone.
+]]
+
 return {
 	{
 		"LiamSnow/pygpt.nvim",
@@ -46,13 +52,20 @@ return {
 				defaults = {
 					temperature = 0.2,
 					max_tokens = 4000,
-					system = system_prompt:gsub("\n", "\\n"),
-                    client = "deepseek"
+					system = {
+                        anthropic = system_prompt:gsub("\n", "\\n"),
+                        openai = system_prompt:gsub("\n", "\\n"),
+                        deepseek = system_prompt:gsub("\n", "\\n"),
+                        perplexity = perplexity_system_prompt:gsub("\n", "\\n"),
+                    }
 				},
 			})
 
 			vim.keymap.set({ "n", "v" }, "<C-=>", ":PyGPTToggle<CR>")
-			vim.keymap.set({ "n", "v" }, "<C-->", ":PyGPTNew<CR>")
+			vim.keymap.set({ "n", "v" }, "<C-->p", ":PyGPTNew perplexity<CR>")
+			vim.keymap.set({ "n", "v" }, "<C-->d", ":PyGPTNew deepseek<CR>")
+			vim.keymap.set({ "n", "v" }, "<C-->o", ":PyGPTNew openai<CR>")
+			vim.keymap.set({ "n", "v" }, "<C-->a", ":PyGPTNew anthropic<CR>")
 
 			vim.keymap.set("v", "<C-j>", ":PyGPTRun<CR>")
 			vim.keymap.set("n", "<C-A-j>", ":PyGPTStop<CR>")
