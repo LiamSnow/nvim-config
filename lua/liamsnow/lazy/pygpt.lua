@@ -8,9 +8,6 @@ local function read_api_key(key)
 	return ""
 end
 
-local anthropic_key = read_api_key("anthropic")
-local openai_key = read_api_key("openai")
-
 local system_prompt = [[
 You are a professional AI assistant designed to approach problems methodically. Before providing an answer, follow these steps:
 
@@ -40,12 +37,17 @@ return {
 		end,
 		config = function()
 			require("pygpt").setup({
-				anthropic_key = anthropic_key,
-				openai_key = openai_key,
-				default_params = {
+                api_keys = {
+                    anthropic = read_api_key("anthropic"),
+                    openai = read_api_key("openai"),
+                    perplexity = read_api_key("perplexity"),
+                    deepseek = read_api_key("deepseek"),
+                },
+				defaults = {
 					temperature = 0.2,
 					max_tokens = 4000,
-					system = system_prompt:gsub("\n", "\\n")
+					system = system_prompt:gsub("\n", "\\n"),
+                    client = "deepseek"
 				},
 			})
 

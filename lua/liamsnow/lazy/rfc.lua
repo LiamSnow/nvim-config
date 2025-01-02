@@ -1,5 +1,0 @@
-return {
-  {
-    'mhinz/vim-rfc',
-  }
-}

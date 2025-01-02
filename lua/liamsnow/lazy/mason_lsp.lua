@@ -19,6 +19,7 @@ return {
 			require("fidget").setup()
 			require("mason").setup()
 			require("mason-lspconfig").setup({
+                -- https://github.com/williamboman/mason-lspconfig.nvim
 				ensure_installed = {
 					"lua_ls",
 					"rust_analyzer",
@@ -29,23 +30,23 @@ return {
 					-- "biome", -- ts, js
 					-- "tsserver",
 					-- "denols",
-					"svelte",
-					"zls", -- zig
+					-- "svelte",
+					-- "zls", -- zig
 					"yamlls",
-					"matlab_ls",
-					"svls", -- sys verilog
+					-- "matlab_ls",
+					-- "svls", -- sys verilog
 					"dockerls",
-					"texlab",
-					"clangd",
-					"cmake",
-					"arduino_language_server",
+					-- "texlab",
+					-- "clangd",
+					-- "cmake",
+					-- "arduino_language_server",
 					"marksman", -- md
-					"terraformls",
+					-- "terraformls",
 					-- "hyprls"
-					"glint",
-					"templ",
-          -- "typst_lsp"
-          "tinymist"
+					-- "glint",
+					-- "templ",
+                    "tinymist",
+                    -- "gleam"
 				},
 				handlers = {
 					function(server_name) -- default handler (optional)

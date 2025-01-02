@@ -1,8 +1,10 @@
-import anthropic
+# import anthropic
+from openai import OpenAI
 import pynvim
 import datetime
 import os
 import re
+import models
 
 file_extension_to_markdown_map = {
     "py":  "python",
@@ -39,21 +41,31 @@ class PyGPT(object):
     def __init__(self, nvim):
         self.nvim = nvim
         self.readConfig()
-        self.client = anthropic.Anthropic(
-            api_key=self.config["anthropic_key"],
-        )
+        self.clients = models.make_clients(self.config['api_keys'])
         self.initActiveChat()
         self.stream_cancelled = False
         self.buffer_count = 0
 
     def readConfig(self):
         self.config = {
-            "anthropic_key": "",
+            "api_keys": {
+                "anthropic": "",
+                "openai": "",
+                "perplexity": "",
+                "deepseek": "",
+            },
             "chat_dir": "~/.cache/nvim/pygpt/",
-            "default_params": {
+            "defaults": {
                 "temperature": 0.2,
                 "max_tokens": 1024,
                 "system": "",
+                "client": "anthropic",
+            },
+            "models": {
+                "anthropic": "claude-3-5-sonnet-20240620",
+                "openai": "o1",
+                "perplexity": "llama-3.1-sonar-huge-128k-online",
+                "deepseek": "deepseek-chat",
             }
         }
         cfg = self.nvim.exec_lua('return require("pygpt").getConfig()')
@@ -104,57 +116,10 @@ class PyGPT(object):
         start_line = range[0] - 1
         end_line = range[1]
         selected_content = "\n".join(bufnr[start_line:end_line])
-
         if (bufnr.name.startswith(self.getChatDir())):
             self.setActiveChat(bufnr.name)
-
         params = self.readFrontMatter(bufnr)
-
-        try:
-            self.stream_cancelled = False
-            with self.client.messages.stream(
-                max_tokens=params['max_tokens'],
-                system=params['system'],
-                temperature=params['temperature'],
-                messages=[
-                    {"role": "user", "content": selected_content}
-                ],
-                model="claude-3-5-sonnet-20240620",
-            ) as stream:
-                # add blank line
-                bufnr.append("", end_line)
-                end_line += 1
-
-                # add stream line by line to buffer
-                buffer_text = ""
-                buffer_lines = []
-                for text in stream.text_stream:
-                    if (self.stream_cancelled):
-                        stream.close()
-                        break
-
-                    buffer_text += text
-                    if "\n" in text:
-                        lines = buffer_text.split("\n")
-                        buffer_lines.extend(lines[:-1])
-                        buffer_text = lines[-1]
-
-                        if len(buffer_lines) >= 5:
-                            bufnr.append(buffer_lines, end_line)
-                            end_line += len(buffer_lines)
-                            buffer_lines = []
-
-                # append remaining lines
-                if buffer_lines:
-                    bufnr.append(buffer_lines, end_line)
-                if buffer_text:
-                    bufnr.append(buffer_text, end_line)
-        except anthropic.APIConnectionError as e:
-            self.nvim.err_write(f"PyGPT: Anthropic API Connection Error {e.__cause__}\n")
-        except anthropic.RateLimitError as e:
-            self.nvim.err_write("PyGPT: Anthropic Rate Limit Error\n")
-        except anthropic.APIStatusError as e:
-            self.nvim.err_write(f"PyGPT: Anthropic Error status={e.status_code} response={e.response}\n")
+        models.run(selected_content, end_line, bufnr, params, self)
 
     @pynvim.command("PyGPTStop")
     def stop(self):
@@ -165,7 +130,7 @@ class PyGPT(object):
         self.nvim.command(f"Neotree {self.getChatDir()}")
 
     def readFrontMatter(self, bufnr):
-        default = self.config['default_params']
+        defaults = self.config['defaults']
 
         content = "\n".join(bufnr[:])
         frontmatter_match = re.search(r"^---\n(.*?)\n---", content, re.DOTALL)
@@ -175,11 +140,13 @@ class PyGPT(object):
             temperature_match = re.search(r"temperature:\s*(\d+\.?\d*)", frontmatter)
             max_tokens_match = re.search(r"max_tokens:\s*(\d+)", frontmatter)
             system_match = re.search(r"system:\s*(.*)", frontmatter)
+            client_match = re.search(r"client:\s*(.*)", frontmatter)
 
         return {
-            "temperature": float(temperature_match.group(1)) if temperature_match else default['temperature'],
-            "max_tokens": int(max_tokens_match.group(1)) if max_tokens_match else default['max_tokens'],
-            "system": system_match.group(1).strip() if system_match else default['system']
+            "temperature": float(temperature_match.group(1)) if temperature_match else defaults['temperature'],
+            "max_tokens": int(max_tokens_match.group(1)) if max_tokens_match else defaults['max_tokens'],
+            "system": system_match.group(1).strip() if system_match else defaults['system'],
+            "client": client_match.group(1).strip() if client_match else defaults['client']
         };
 
     def setActiveChat(self, chat):
@@ -210,7 +177,7 @@ class PyGPT(object):
         with open(chat_file, "w") as file:
             # Add markdown frontmatter
             file.write("---\n")
-            for key, value in self.config['default_params'].items():
+            for key, value in self.config['defaults'].items():
                 file.write(f"{key}: {value}\n")
             file.write("---\n\n\n")
         return chat_file

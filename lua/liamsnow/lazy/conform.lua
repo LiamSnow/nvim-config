@@ -32,7 +32,8 @@ return {
           xml = { "yq" },
           csv = { "yq" },
           jsonc = { "deno_fmt" },
-          typst = { "typstyle" }
+          typst = { "typstyle" },
+          gleam = { "gleam" },
         },
         formatters = {
           black = {

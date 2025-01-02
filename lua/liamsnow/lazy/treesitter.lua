@@ -41,7 +41,8 @@ return {
           "glimmer",
           "templ",
           "svelte",
-          "typst"
+          "typst",
+          "gleam"
         },
         sync_install = false,
         auto_insall = true,

@@ -23,10 +23,10 @@ return {
           end,
         },
         mapping = cmp.mapping.preset.insert({
-          ['<A-,>'] = cmp.mapping.select_prev_item(cmp_select),
-          ['<A-.>'] = cmp.mapping.select_next_item(cmp_select),
-          ['<C-.>'] = cmp.mapping.confirm({ select = true }),
-          ["<C-/>"] = cmp.mapping.complete(),
+          ['<Tab>'] = cmp.mapping.select_next_item(cmp_select),
+          ['<A-Tab>'] = cmp.mapping.select_prev_item(cmp_select),
+          ['<A-CR>'] = cmp.mapping.confirm({ select = true }),
+          -- ["<C-/>"] = cmp.mapping.complete(),
         }),
         sources = cmp.config.sources({
           { name = "nvim_lsp" },
