@@ -77,4 +77,7 @@ return {
   --     })
   --   end
   -- }
+  {
+    'isobit/vim-caddyfile'
+  }
 }

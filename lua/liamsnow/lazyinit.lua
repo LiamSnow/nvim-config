@@ -12,9 +12,17 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({
-	spec = "liamsnow.lazy",
-	change_detection = { notify = false },
-  ui = {
-    backdrop = 100
-  }
+    -- spec = "liamsnow.lazy",
+    spec = {
+      {import = "liamsnow.lazy"},
+      {import = "liamsnow.lazy.ide"},
+      {import = "liamsnow.lazy.integrations"},
+      {import = "liamsnow.lazy.nav"},
+      {import = "liamsnow.lazy.style"},
+      {import = "liamsnow.lazy.tweaks"},
+    },
+    change_detection = { notify = false },
+    ui = {
+        backdrop = 100
+    }
 })

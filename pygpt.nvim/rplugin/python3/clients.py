@@ -95,7 +95,11 @@ def run_openai(message, end_line, bufnr, params, model, client, self):
         if self.stream_cancelled:
             return
 
-        buffer_text += chunk.choices[0].delta.content
+        content = chunk.choices[0].delta.content
+        if content is None:
+            continue
+
+        buffer_text += content
         if "\n" in buffer_text:
             lines = buffer_text.split("\n")
             buffer_lines.extend(lines[:-1])

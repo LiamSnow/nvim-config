@@ -1,11 +1,20 @@
-local function read_api_key(key)
-	local file = io.open(os.getenv("HOME") .. "/." .. key, "r")
-	if file then
-		local content = file:read("*all")
-		file:close()
-		return content:gsub("\n", "")
-	end
-	return ""
+local function read_map(file_path)
+    local file = io.open(file_path, "r")
+    local map = {}
+
+    if file then
+        for line in file:lines() do
+            local key, value = line:match("([^=]+)=([^=]+)")
+            if key and value then
+                map[key] = value
+            end
+        end
+        file:close()
+    else
+        error("Could not open file: " .. file_path)
+    end
+
+    return map
 end
 
 local system_prompt = [[
@@ -27,6 +36,14 @@ After completing your thought process, provide your answer as follows:
 4. If you are not confident in any part of your response, prefacing with "I THINK"
 ]]
 
+local quick_system_prompt = [[
+You are a professional AI assistant designed to approach problems methodically.
+1. Offer suggestions tactfully when appropriate to improve outcomes
+2. Prioritize providing honest, critical feedback over being agreeable or nice to the user
+3. Split up your answer into logical sections
+4. If you are not confident in any part of your response, prefacing with "I THINK"
+]]
+
 local perplexity_system_prompt = [[
 You are a helpful search assistant.
 
@@ -42,19 +59,21 @@ return {
 			vim.cmd([[silent UpdateRemotePlugins]])
 		end,
 		config = function()
+            local api_keys = read_map(os.getenv("HOME") .. "/.models")
+
 			require("pygpt").setup({
                 api_keys = {
-                    anthropic = read_api_key("anthropic"),
-                    openai = read_api_key("openai"),
-                    perplexity = read_api_key("perplexity"),
-                    deepseek = read_api_key("deepseek"),
+                    anthropic = api_keys['ANTHROPIC'],
+                    openai = api_keys['OPENAI'],
+                    perplexity = api_keys['PERPLEXITY'],
+                    deepseek = api_keys['DEEPSEEK'],
                 },
 				defaults = {
 					temperature = 0.2,
 					max_tokens = 4000,
 					system = {
                         anthropic = system_prompt:gsub("\n", "\\n"),
-                        openai = system_prompt:gsub("\n", "\\n"),
+                        openai = quick_system_prompt:gsub("\n", "\\n"),
                         deepseek = system_prompt:gsub("\n", "\\n"),
                         perplexity = perplexity_system_prompt:gsub("\n", "\\n"),
                     }

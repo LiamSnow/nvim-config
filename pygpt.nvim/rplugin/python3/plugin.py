@@ -2,7 +2,7 @@ import pynvim
 import datetime
 import os
 import re
-import models
+import clients
 
 file_extension_to_markdown_map = {
     "py":  "python",
@@ -39,7 +39,7 @@ class PyGPT(object):
     def __init__(self, nvim):
         self.nvim = nvim
         self.readConfig()
-        self.clients = models.make_clients(self.config['api_keys'])
+        self.clients = clients.make_clients(self.config['api_keys'])
         self.initActiveChat()
         self.stream_cancelled = False
         self.buffer_count = 0
@@ -65,8 +65,8 @@ class PyGPT(object):
             },
             "models": {
                 "anthropic": "claude-3-5-sonnet-20240620",
-                "openai": "o1",
-                "perplexity": "llama-3.1-sonar-huge-128k-online",
+                "openai": "gpt-4o",
+                "perplexity": "sonar-pro",
                 "deepseek": "deepseek-chat",
             }
         }
@@ -107,8 +107,8 @@ class PyGPT(object):
             _, file_extension = os.path.splitext(bufnr.name)
             file_extension = file_extension.lstrip('.')
             if file_extension in file_extension_to_markdown_map:
-                language = file_extension_to_markdown_map[file_extension]
-                selected_content = f"```{language}\n{selected_content}\n```"
+                file_extension = file_extension_to_markdown_map[file_extension]
+            selected_content = f"```{file_extension}\n{selected_content}\n```"
 
             self.openFile(active_chat, f"\n{selected_content}\n")
         # open normally
@@ -124,7 +124,7 @@ class PyGPT(object):
         if (bufnr.name.startswith(self.getChatDir())):
             self.setActiveChat(bufnr.name)
         params = self.readFrontMatter(bufnr)
-        models.run(selected_content, end_line, bufnr, params, self)
+        clients.run(selected_content, end_line, bufnr, params, self)
 
     @pynvim.command("PyGPTStop")
     def stop(self):

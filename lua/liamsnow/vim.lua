@@ -75,9 +75,17 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 -- move long lines
 vim.keymap.set("n", "J", "mzJ`z")
 
+-- wrap/nowrap
+vim.keymap.set("n", "<leader>W", ":set wrap<CR>")
+vim.keymap.set("n", "<leader><S-W>", ":set nowrap<CR>")
+
 -- keep cursor in middle when jumping
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
 vim.keymap.set("n", "<C-u>", "<C-u>zz")
+
+-- keep cursor in middle when searching
+vim.keymap.set("n", "n", "nzzzv")
+vim.keymap.set("n", "N", "Nzzzv")
 
 -- keep cursor in middle when searching
 vim.keymap.set("n", "n", "nzzzv")
