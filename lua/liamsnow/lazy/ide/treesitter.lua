@@ -42,7 +42,8 @@ return {
           "templ",
           "svelte",
           "typst",
-          "gleam"
+          "gleam",
+          "ron",
         },
         sync_install = false,
         auto_insall = true,

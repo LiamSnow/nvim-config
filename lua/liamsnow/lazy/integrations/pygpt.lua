@@ -17,7 +17,7 @@ local function read_map(file_path)
     return map
 end
 
-local system_prompt = [[
+local think_prompt = [[
 You are a professional AI assistant designed to approach problems methodically. Before providing an answer, follow these steps:
 
 THINKING
@@ -36,7 +36,7 @@ After completing your thought process, provide your answer as follows:
 4. If you are not confident in any part of your response, prefacing with "I THINK"
 ]]
 
-local quick_system_prompt = [[
+local basic_prompt = [[
 You are a professional AI assistant designed to approach problems methodically.
 1. Offer suggestions tactfully when appropriate to improve outcomes
 2. Prioritize providing honest, critical feedback over being agreeable or nice to the user
@@ -44,10 +44,10 @@ You are a professional AI assistant designed to approach problems methodically.
 4. If you are not confident in any part of your response, prefacing with "I THINK"
 ]]
 
-local perplexity_system_prompt = [[
+local search_prompt = [[
 You are a helpful search assistant.
 
-Your task is to deliver a concise and accurate response to a user's query, drawing from the given search results. Your answer must be precise, of high-quality, and written by an expert using an unbiased and journalistic tone.
+Your task is to deliver an accurate response to a user's query, drawing from the given search results. Your answer must be precise, of high-quality, and written by an expert using an unbiased and journalistic tone.
 ]]
 
 return {
@@ -68,23 +68,82 @@ return {
                     perplexity = api_keys['PERPLEXITY'],
                     deepseek = api_keys['DEEPSEEK'],
                 },
-				defaults = {
-					temperature = 0.2,
-					max_tokens = 4000,
-					system = {
-                        anthropic = system_prompt:gsub("\n", "\\n"),
-                        openai = quick_system_prompt:gsub("\n", "\\n"),
-                        deepseek = system_prompt:gsub("\n", "\\n"),
-                        perplexity = perplexity_system_prompt:gsub("\n", "\\n"),
+                chat_dir = "~/.cache/nvim/pygpt/",
+                default_config = "claude_think_hidden",
+                configs = {
+                    claude_basic = {
+                        provider = "anthropic",
+                        model = "claude-3-7-sonnet-latest",
+                        thinking = false,
+                        temperature = 0.2,
+                        max_tokens = 4000,
+                        system = basic_prompt:gsub("\n", "\\n")
+                    },
+                    claude_think_prompt = {
+                        provider = "anthropic",
+                        model = "claude-3-7-sonnet-latest",
+                        thinking = false,
+                        temperature = 0.2,
+                        max_tokens = 4000,
+                        system = think_prompt:gsub("\n", "\\n")
+                    },
+                    claude_think = {
+                        provider = "anthropic",
+                        model = "claude-3-7-sonnet-latest",
+                        thinking = true,
+                        max_tokens = 20000,
+                        -- TODO new prompt
+                        system = "You are a professional AI assistant designed to approach problems methodically."
+                    },
+                    claude_think_hidden = {
+                        provider = "anthropic",
+                        model = "claude-3-7-sonnet-latest",
+                        thinking = true,
+                        hide_thinking = true,
+                        hide_markers = true,
+                        max_tokens = 20000,
+                        -- TODO new prompt
+                        system = "You are a professional AI assistant designed to approach problems methodically."
+                    },
+                    deepseek = {
+                        provider = "deepseek",
+                        model = "deepseek-chat",
+                        temperature = 0.2,
+                        max_tokens = 4000,
+                        system = think_prompt:gsub("\n", "\\n")
+                    },
+                    chat = {
+                        provider = "openai",
+                        model = "gpt-4o",
+                        temperature = 0.2,
+                        max_tokens = 4000,
+                        system = basic_prompt:gsub("\n", "\\n")
+                    },
+                    perplexity = {
+                        provider = "perplexity",
+                        model = "sonar-pro",
+                        temperature = 0.2,
+                        max_tokens = 4000,
+                        system = search_prompt:gsub("\n", "\\n"),
+                    },
+                    perplexity_deep = {
+                        provider = "perplexity",
+                        model = "sonar-deep-research",
+                        temperature = 0.2,
+                        max_tokens = 4000,
+                        system = search_prompt:gsub("\n", "\\n"),
                     }
-				},
+                }
 			})
 
 			vim.keymap.set({ "n", "v" }, "<C-=>", ":PyGPTToggle<CR>")
 			vim.keymap.set({ "n", "v" }, "<C-->p", ":PyGPTNew perplexity<CR>")
+			vim.keymap.set({ "n", "v" }, "<C--><C-p>", ":PyGPTNew perplexity_deep<CR>")
 			vim.keymap.set({ "n", "v" }, "<C-->d", ":PyGPTNew deepseek<CR>")
-			vim.keymap.set({ "n", "v" }, "<C-->o", ":PyGPTNew openai<CR>")
-			vim.keymap.set({ "n", "v" }, "<C-->a", ":PyGPTNew anthropic<CR>")
+			vim.keymap.set({ "n", "v" }, "<C-->o", ":PyGPTNew chat<CR>")
+			vim.keymap.set({ "n", "v" }, "<C-->b", ":PyGPTNew claude_basic<CR>")
+			vim.keymap.set({ "n", "v" }, "<C-->a", ":PyGPTNew claude_think<CR>")
+			vim.keymap.set({ "n", "v" }, "<C--><C-a>", ":PyGPTNew claude_think_prompt<CR>")
 
 			vim.keymap.set("v", "<C-j>", ":PyGPTRun<CR>")
 			vim.keymap.set("n", "<C-A-j>", ":PyGPTStop<CR>")

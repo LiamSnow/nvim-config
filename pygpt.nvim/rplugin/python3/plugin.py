@@ -4,33 +4,7 @@ import os
 import re
 import clients
 
-file_extension_to_markdown_map = {
-    "py":  "python",
-    "rs":  "rust",
-    "js":  "javascript",
-    "java": "java",
-    "c":   "c",
-    "cs":  "csharp",
-    "cpp": "cpp",
-    "go":  "go",
-    "php": "php",
-    "rb":  "ruby",
-    "ts":  "typescript",
-    "kt":  "kotlin",
-    "m":   "matlab",
-    "lua": "lua",
-    "sql": "sql",
-    "sh":  "bash",
-    "html": "html",
-    "css": "css",
-    "scss": "scss",
-    "xml": "xml",
-    "json": "json",
-    "yml": "yaml",
-    "zig": "zig",
-    "toml": "toml",
-    "swift": "swift",
-}
+NOT_CODE_EXTENSIONS = ["md", "txt"]
 
 @pynvim.plugin
 class PyGPT(object):
@@ -38,45 +12,16 @@ class PyGPT(object):
 
     def __init__(self, nvim):
         self.nvim = nvim
-        self.readConfig()
+        self.config = self.nvim.exec_lua('return require("pygpt").getConfig()')
         self.clients = clients.make_clients(self.config['api_keys'])
         self.initActiveChat()
         self.stream_cancelled = False
         self.buffer_count = 0
 
-    def readConfig(self):
-        self.config = {
-            "api_keys": {
-                "anthropic": "",
-                "openai": "",
-                "perplexity": "",
-                "deepseek": "",
-            },
-            "chat_dir": "~/.cache/nvim/pygpt/",
-            "defaults": {
-                "temperature": 0.2,
-                "max_tokens": 1024,
-                "system": {
-                    "anthropic": "",
-                    "openai": "",
-                    "perplexity": "",
-                    "deepseek": "",
-                }
-            },
-            "models": {
-                "anthropic": "claude-3-5-sonnet-20240620",
-                "openai": "gpt-4o",
-                "perplexity": "sonar-pro",
-                "deepseek": "deepseek-chat",
-            }
-        }
-        cfg = self.nvim.exec_lua('return require("pygpt").getConfig()')
-        self.config.update(cfg)
-
     @pynvim.command("PyGPTNew", nargs=1, range="")
     def new(self, args, range):
         if len(args) < 1:
-            print("Must provide model as argument!")
+            print("Must provide config as argument!")
             return
         self.setActiveChat(self.makeNewChat(args[0]))
         self.open(None, range)
@@ -106,9 +51,8 @@ class PyGPT(object):
             # add markdown code block
             _, file_extension = os.path.splitext(bufnr.name)
             file_extension = file_extension.lstrip('.')
-            if file_extension in file_extension_to_markdown_map:
-                file_extension = file_extension_to_markdown_map[file_extension]
-            selected_content = f"```{file_extension}\n{selected_content}\n```"
+            if file_extension not in NOT_CODE_EXTENSIONS:
+                selected_content = f"```{file_extension}\n{selected_content}\n```"
 
             self.openFile(active_chat, f"\n{selected_content}\n")
         # open normally
@@ -135,24 +79,40 @@ class PyGPT(object):
         self.nvim.command(f"Neotree {self.getChatDir()}")
 
     def readFrontMatter(self, bufnr):
-        defaults = self.config['defaults']
-
         content = "\n".join(bufnr[:])
         frontmatter_match = re.search(r"^---\n(.*?)\n---", content, re.DOTALL)
-        temperature_match = max_tokens_match = system_match = False
+        config_match = False
         if frontmatter_match:
+            temperature_match = max_tokens_match = config_match = None
             frontmatter = frontmatter_match.group(1)
             temperature_match = re.search(r"temperature:\s*(\d+\.?\d*)", frontmatter)
             max_tokens_match = re.search(r"max_tokens:\s*(\d+)", frontmatter)
-            system_match = re.search(r"system:\s*(.*)", frontmatter)
-            client_match = re.search(r"client:\s*(.*)", frontmatter)
+            config_match = re.search(r"config:\s*(.*)", frontmatter)
 
-        return {
-            "temperature": float(temperature_match.group(1)) if temperature_match else defaults['temperature'],
-            "max_tokens": int(max_tokens_match.group(1)) if max_tokens_match else defaults['max_tokens'],
-            "system": system_match.group(1).strip() if system_match else defaults['system'],
-            "client": client_match.group(1).strip() if client_match else ""
-        };
+            if config_match:
+                config_name = config_match.group(1).strip()
+                config = self.config['configs'][config_name]
+                default_temp = 0.2
+                if 'temperature' in config:
+                    default_temp = config['temperature']
+                return {
+                    "temperature": float(temperature_match.group(1)) if temperature_match else default_temp,
+                    "max_tokens": int(max_tokens_match.group(1)) if max_tokens_match else config['max_tokens'],
+                    "config": config_name
+                };
+
+        if not config_match:
+            # use default if there is no frontmatter
+            config_name = self.config['default_config']
+            config = self.config['configs'][config_name]
+            default_temp = 0.2
+            if 'temperature' in config:
+                default_temp = config['temperature']
+            return {
+                "temperature": default_temp,
+                "max_tokens": config['max_tokens'],
+                "config": config_name
+            }
 
     def setActiveChat(self, chat):
         self.nvim.api.set_var("pygpt_active_chat", chat)
@@ -175,20 +135,20 @@ class PyGPT(object):
             last_chat = self.makeNewChat()
         self.setActiveChat(last_chat)
 
-    def makeNewChat(self, client):
+    def makeNewChat(self, config_name):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        chat_file = f"{self.getChatDir()}chat_{timestamp}.md"
-        os.makedirs(os.path.dirname(chat_file), exist_ok=True)
-        with open(chat_file, "w") as file:
+        filename = f"{self.getChatDir()}{timestamp}.md"
+        os.makedirs(os.path.dirname(filename), exist_ok=True)
+        with open(filename, "w") as file:
             # Add markdown frontmatter
             file.write("---\n")
-            defaults = self.config['defaults']
-            file.write(f"system: {defaults['system'][client]}\n")
-            file.write(f"client: {client}\n")
-            file.write(f"temperature: {defaults['temperature']}\n")
+            defaults = self.config['configs'][config_name]
+            file.write(f"config: {config_name}\n")
+            if 'temperature' in defaults:
+                file.write(f"temperature: {defaults['temperature']}\n")
             file.write(f"max_tokens: {defaults['max_tokens']}\n")
             file.write("---\n\n\n")
-        return chat_file
+        return filename
 
     def openFile(self, file_path, content=None):
         # self.nvim.command(":TSContextDisable")

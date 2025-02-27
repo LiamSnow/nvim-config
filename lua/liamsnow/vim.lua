@@ -10,7 +10,7 @@ vim.opt.expandtab = true
 vim.opt.smartindent = true
 
 -- undo
-vim.opt.undodir = os.getenv("HOME") .. "/.vim/undodir"
+vim.opt.undodir = os.getenv("HOME") .. "/.cache/nvim/undodir"
 vim.opt.undofile = true
 
 -- highlight cursor line
@@ -76,8 +76,8 @@ vim.keymap.set("v", "K", ":m '<-2<CR>gv=gv")
 vim.keymap.set("n", "J", "mzJ`z")
 
 -- wrap/nowrap
-vim.keymap.set("n", "<leader>W", ":set wrap<CR>")
-vim.keymap.set("n", "<leader><S-W>", ":set nowrap<CR>")
+vim.keymap.set("n", "<leader>c", ":set wrap<CR>")
+vim.keymap.set("n", "<leader><S-c>", ":set nowrap<CR>")
 
 -- keep cursor in middle when jumping
 vim.keymap.set("n", "<C-d>", "<C-d>zz")
