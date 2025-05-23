@@ -19,7 +19,7 @@ return {
 			require("fidget").setup()
 			require("mason").setup()
 			require("mason-lspconfig").setup({
-                -- https://github.com/williamboman/mason-lspconfig.nvim
+				-- https://github.com/williamboman/mason-lspconfig.nvim
 				ensure_installed = {
 					"lua_ls",
 					"rust_analyzer",
@@ -45,8 +45,8 @@ return {
 					-- "hyprls"
 					-- "glint",
 					-- "templ",
-                    "tinymist",
-                    -- "gleam"
+					"tinymist",
+					-- "gleam"
 				},
 				handlers = {
 					function(server_name) -- default handler (optional)
@@ -124,12 +124,12 @@ return {
 						})
 					end,
 
-          ["tinymist"] = function()
-            require("lspconfig").tinymist.setup({
+					["tinymist"] = function()
+						require("lspconfig").tinymist.setup({
 							capabilities = capabilities,
-              offset_encoding = "utf-8",
-            })
-          end,
+							offset_encoding = "utf-8",
+						})
+					end,
 				},
 			})
 		end,

@@ -16,7 +16,7 @@ require("lazy").setup({
     spec = {
       {import = "liamsnow.lazy"},
       {import = "liamsnow.lazy.ide"},
-      {import = "liamsnow.lazy.integrations"},
+      {import = "liamsnow.lazy.preview"},
       {import = "liamsnow.lazy.nav"},
       {import = "liamsnow.lazy.style"},
       {import = "liamsnow.lazy.tweaks"},

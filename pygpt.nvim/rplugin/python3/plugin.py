@@ -6,6 +6,7 @@ import clients
 
 NOT_CODE_EXTENSIONS = ["md", "txt"]
 
+
 @pynvim.plugin
 class PyGPT(object):
     nvim: pynvim.Nvim
@@ -13,9 +14,10 @@ class PyGPT(object):
     def __init__(self, nvim):
         self.nvim = nvim
         self.config = self.nvim.exec_lua('return require("pygpt").getConfig()')
-        self.clients = clients.make_clients(self.config['api_keys'])
+        self.stopped = True
+        self.stream = None
+        self.client = None
         self.initActiveChat()
-        self.stream_cancelled = False
         self.buffer_count = 0
 
     @pynvim.command("PyGPTNew", nargs=1, range="")
@@ -26,31 +28,31 @@ class PyGPT(object):
         self.setActiveChat(self.makeNewChat(args[0]))
         self.open(None, range)
 
-    @pynvim.command("PyGPTToggle", nargs='*', range="")
+    @pynvim.command("PyGPTToggle", nargs="*", range="")
     def toggle(self, _, range):
         current_file = self.nvim.current.buffer.name
         active_chat = self.getActiveChat()
 
         # already in chat -> go back
         if current_file == active_chat:
-            alternate_buffer = self.nvim.funcs.bufnr('#')
+            alternate_buffer = self.nvim.funcs.bufnr("#")
             self.nvim.current.buffer = self.nvim.buffers[alternate_buffer]
         # open chat
         else:
             self.open(_, range)
 
-    @pynvim.command("PyGPTOpen", nargs='*', range="")
+    @pynvim.command("PyGPTOpen", nargs="*", range="")
     def open(self, _, range):
         active_chat = self.getActiveChat()
 
         # append selection to end of chat
-        if (range[0] != range[1]):
+        if range[0] != range[1]:
             bufnr = self.nvim.current.buffer
-            selected_content = "\n".join(bufnr[range[0]-1:range[1]])
+            selected_content = "\n".join(bufnr[range[0] - 1 : range[1]])
 
             # add markdown code block
             _, file_extension = os.path.splitext(bufnr.name)
-            file_extension = file_extension.lstrip('.')
+            file_extension = file_extension.lstrip(".")
             if file_extension not in NOT_CODE_EXTENSIONS:
                 selected_content = f"```{file_extension}\n{selected_content}\n```"
 
@@ -59,20 +61,29 @@ class PyGPT(object):
         else:
             self.openFile(active_chat)
 
-    @pynvim.command("PyGPTRun", nargs='*', range="")
+    @pynvim.command("PyGPTRun", nargs="*", range="")
     def run(self, _, range):
+        self.stopped = True
         bufnr = self.nvim.current.buffer
         start_line = range[0] - 1
         end_line = range[1]
         selected_content = "\n".join(bufnr[start_line:end_line])
-        if (bufnr.name.startswith(self.getChatDir())):
+        if bufnr.name.startswith(self.getChatDir()):
             self.setActiveChat(bufnr.name)
         params = self.readFrontMatter(bufnr)
         clients.run(selected_content, end_line, bufnr, params, self)
 
     @pynvim.command("PyGPTStop")
     def stop(self):
-        self.stream_cancelled = True
+        self.stopped = True
+
+    @pynvim.autocmd('VimLeave', pattern='*', sync=True)
+    def on_vim_leave(self):
+        self.stopped = True
+        if self.stream is not None:
+            self.stream.close()
+        if self.client is not None:
+            self.client.close()
 
     @pynvim.command("PyGPTExplorer")
     def explorer(self):
@@ -91,27 +102,35 @@ class PyGPT(object):
 
             if config_match:
                 config_name = config_match.group(1).strip()
-                config = self.config['configs'][config_name]
+                config = self.config["configs"][config_name]
                 default_temp = 0.2
-                if 'temperature' in config:
-                    default_temp = config['temperature']
+                if "temperature" in config:
+                    default_temp = config["temperature"]
                 return {
-                    "temperature": float(temperature_match.group(1)) if temperature_match else default_temp,
-                    "max_tokens": int(max_tokens_match.group(1)) if max_tokens_match else config['max_tokens'],
-                    "config": config_name
-                };
+                    "temperature": (
+                        float(temperature_match.group(1))
+                        if temperature_match
+                        else default_temp
+                    ),
+                    "max_tokens": (
+                        int(max_tokens_match.group(1))
+                        if max_tokens_match
+                        else config["max_tokens"]
+                    ),
+                    "config": config_name,
+                }
 
         if not config_match:
             # use default if there is no frontmatter
-            config_name = self.config['default_config']
-            config = self.config['configs'][config_name]
+            config_name = self.config["default_config"]
+            config = self.config["configs"][config_name]
             default_temp = 0.2
-            if 'temperature' in config:
-                default_temp = config['temperature']
+            if "temperature" in config:
+                default_temp = config["temperature"]
             return {
                 "temperature": default_temp,
-                "max_tokens": config['max_tokens'],
-                "config": config_name
+                "max_tokens": config["max_tokens"],
+                "config": config_name,
             }
 
     def setActiveChat(self, chat):
@@ -121,7 +140,7 @@ class PyGPT(object):
         return self.nvim.api.get_var("pygpt_active_chat")
 
     def getChatDir(self):
-        return os.path.expanduser(self.config['chat_dir'])
+        return os.path.expanduser(self.config["chat_dir"])
 
     def initActiveChat(self):
         chat_dir = self.getChatDir()
@@ -129,7 +148,9 @@ class PyGPT(object):
         last_chat = ""
         chat_files = [f for f in os.listdir(chat_dir) if f.endswith(".md")]
         if chat_files and len(chat_files) > 0:
-            most_recent_file = max(chat_files, key=lambda f: os.path.getmtime(os.path.join(chat_dir, f)))
+            most_recent_file = max(
+                chat_files, key=lambda f: os.path.getmtime(os.path.join(chat_dir, f))
+            )
             last_chat = os.path.join(chat_dir, most_recent_file)
         else:
             last_chat = self.makeNewChat()
@@ -142,9 +163,9 @@ class PyGPT(object):
         with open(filename, "w") as file:
             # Add markdown frontmatter
             file.write("---\n")
-            defaults = self.config['configs'][config_name]
+            defaults = self.config["configs"][config_name]
             file.write(f"config: {config_name}\n")
-            if 'temperature' in defaults:
+            if "temperature" in defaults:
                 file.write(f"temperature: {defaults['temperature']}\n")
             file.write(f"max_tokens: {defaults['max_tokens']}\n")
             file.write("---\n\n\n")
@@ -159,7 +180,7 @@ class PyGPT(object):
             self.nvim.funcs.bufload(buf_handle)
         self.nvim.api.set_current_buf(buf_handle)
         self.nvim.api.buf_set_option(buf_handle, "buflisted", True)
-        self.nvim.api.buf_set_var(buf_handle, 'pynvim', True)
+        self.nvim.api.buf_set_var(buf_handle, "pynvim", True)
 
         # paste content to bottom
         if content is not None:

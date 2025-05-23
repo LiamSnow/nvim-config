@@ -27,6 +27,7 @@ vim.opt.incsearch = true
 -- other
 vim.opt.wrap = false
 vim.opt.swapfile = false
+vim.opt.autoread = true -- sync buffers!!
 vim.opt.backup = false
 vim.opt.termguicolors = true
 vim.opt.scrolloff = 8
@@ -43,7 +44,9 @@ vim.opt.shell = "zsh"
 vim.g.mapleader = " "
 
 -- mistypes
+-- vim.api.nvim_create_user_command('w ;', 'w', {})
 vim.api.nvim_create_user_command('W', 'w', {})
+vim.api.nvim_create_user_command('W ;', 'w', {})
 vim.api.nvim_create_user_command('WQ', 'wq', {})
 vim.api.nvim_create_user_command('Wq', 'wq', {})
 vim.api.nvim_create_user_command('Wa', 'wa', {})

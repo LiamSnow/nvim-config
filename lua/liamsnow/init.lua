@@ -35,7 +35,7 @@ autocmd({ "FileType" }, {
 	command = "setlocal wrap linebreak",
 })
 
--- LSP Keymaps
+-- LSP
 autocmd("LspAttach", {
 	group = LiamSnowGroup,
 	callback = function(e)
@@ -73,4 +73,20 @@ autocmd("LspAttach", {
 	end,
 })
 
+vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+  vim.lsp.handlers.hover, {
+    border = "rounded"
+  }
+)
+
+vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+  vim.lsp.handlers.signature_help, {
+    border = "rounded"
+  }
+)
+
+vim.opt.winblend = 0
+vim.opt.pumblend = 0
+vim.opt.fillchars = "eob: "
+-- vim.o.fillchars = vim.o.fillchars .. ',floatborder:rounded'
 

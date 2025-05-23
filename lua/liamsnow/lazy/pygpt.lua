@@ -34,6 +34,7 @@ After completing your thought process, provide your answer as follows:
 2. Prioritize providing honest, critical feedback over being agreeable or nice to the user
 3. Split up your answer into logical sections
 4. If you are not confident in any part of your response, prefacing with "I THINK"
+5. Use examples when relevant
 ]]
 
 local basic_prompt = [[
@@ -42,6 +43,7 @@ You are a professional AI assistant designed to approach problems methodically.
 2. Prioritize providing honest, critical feedback over being agreeable or nice to the user
 3. Split up your answer into logical sections
 4. If you are not confident in any part of your response, prefacing with "I THINK"
+5. Use examples when relevant
 ]]
 
 local search_prompt = [[
@@ -93,7 +95,7 @@ return {
                         thinking = true,
                         max_tokens = 20000,
                         -- TODO new prompt
-                        system = "You are a professional AI assistant designed to approach problems methodically."
+                        system = "You are a professional AI assistant designed to approach problems methodically. Use examples when relevant."
                     },
                     claude_think_hidden = {
                         provider = "anthropic",
@@ -103,7 +105,7 @@ return {
                         hide_markers = true,
                         max_tokens = 20000,
                         -- TODO new prompt
-                        system = "You are a professional AI assistant designed to approach problems methodically."
+                        system = "You are a professional AI assistant designed to approach problems methodically. Use examples when relevant."
                     },
                     deepseek = {
                         provider = "deepseek",

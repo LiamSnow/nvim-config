@@ -34,6 +34,8 @@ return {
           jsonc = { "deno_fmt" },
           typst = { "typstyle" },
           gleam = { "gleam" },
+          rescript = { "rescript-format" },
+          elm = { "elm_format" },
         },
         formatters = {
           black = {

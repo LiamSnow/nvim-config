@@ -32,20 +32,20 @@ return {
 				},
 			})
 
-            -- dark()
+            dark()
 		end,
 	},
-	{
-		"f-person/auto-dark-mode.nvim",
-		opts = {
-			set_dark_mode = function()
-                dark()
-			end,
-			set_light_mode = function()
-                light()
-			end,
-			update_interval = 200,
-			fallback = "dark",
-		},
-	},
+	-- {
+	-- 	"f-person/auto-dark-mode.nvim",
+	-- 	opts = {
+	-- 		set_dark_mode = function()
+ --                dark()
+	-- 		end,
+	-- 		set_light_mode = function()
+ --                light()
+	-- 		end,
+	-- 		update_interval = 200,
+	-- 		fallback = "dark",
+	-- 	},
+	-- },
 }

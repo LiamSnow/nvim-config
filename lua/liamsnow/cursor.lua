@@ -1,5 +1,5 @@
 local function set_cursor_color(color)
-  vim.api.nvim_command('highlight Cursor guifg=black guibg=' .. color)
+  vim.api.nvim_command('highlight Cursor guifg=white guibg=' .. color)
 end
 
 local function update_cursor_color()
@@ -21,3 +21,5 @@ vim.api.nvim_create_autocmd({"ModeChanged"}, {
 })
 
 update_cursor_color()
+
+

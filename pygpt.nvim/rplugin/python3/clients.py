@@ -8,43 +8,84 @@ THINKING_END = "<!-- end thinking -->"
 CITATION_START = "<!-- citations -->"
 CITATION_END = "<!-- end citations -->"
 
-def make_clients(keys):
-    return {
-        "anthropic": anthropic.Anthropic(api_key=keys['anthropic']),
-        "openai": OpenAI(api_key=keys['openai']),
-        "perplexity": OpenAI(api_key=keys['perplexity'], base_url="https://api.perplexity.ai"),
-        "deepseek": OpenAI(api_key=keys['deepseek'], base_url="https://api.deepseek.com"),
-    }
-
 def run(message, end_line, bufnr, params, self):
-    config = self.config['configs'][params['config']]
+    config = self.config["configs"][params["config"]]
     hide_markers = False
-    if 'hide_markers' in config:
-        hide_markers = config['hide_markers']
-    match config['provider']:
+    if "hide_markers" in config:
+        hide_markers = config["hide_markers"]
+    match config["provider"]:
         case "anthropic":
-            if config['thinking']:
+            if config["thinking"]:
                 hide_thinking = False
-                if 'hide_thinking' in config:
-                    hide_thinking = config['hide_thinking']
-                    if hide_thinking:
-                        hide_markers = True
-                run_anthropic_thinking(message, end_line, bufnr, params, config['model'], config['system'], hide_thinking, hide_markers, self.clients['anthropic'], self)
+                if "hide_thinking" in config:
+                    hide_thinking = config["hide_thinking"]
+                run_anthropic_thinking(
+                    message,
+                    end_line,
+                    bufnr,
+                    params,
+                    config["model"],
+                    config["system"],
+                    hide_thinking,
+                    hide_markers,
+                    self,
+                )
             else:
-                run_anthropic(message, end_line, bufnr, params, config['model'], config['system'], hide_markers, self.clients['anthropic'], self)
+                run_anthropic(
+                    message,
+                    end_line,
+                    bufnr,
+                    params,
+                    config["model"],
+                    config["system"],
+                    hide_markers,
+                    self,
+                )
         case "openai":
-            run_openai(message, end_line, bufnr, params, config['model'], config['system'], hide_markers, self.clients['openai'], self)
+            self.client = OpenAI(api_key=self.config["api_keys"]["openai"])
+            run_openai(
+                message,
+                end_line,
+                bufnr,
+                params,
+                config["model"],
+                config["system"],
+                hide_markers,
+                self,
+            )
         case "perplexity":
-            run_perplexity(message, end_line, bufnr, params, config['model'], config['system'], hide_markers, self.clients['perplexity'], self)
+            run_perplexity(
+                message,
+                end_line,
+                bufnr,
+                params,
+                config["model"],
+                config["system"],
+                hide_markers,
+                self,
+            )
         case "deepseek":
-            run_openai(message, end_line, bufnr, params, config['model'], config['system'], hide_markers, self.clients['deepseek'], self)
+            self.client = OpenAI(
+                api_key=self.config["api_keys"]["deepseek"],
+                base_url="https://api.deepseek.com",
+            )
+            run_openai(
+                message,
+                end_line,
+                bufnr,
+                params,
+                config["model"],
+                config["system"],
+                hide_markers,
+                self,
+            )
         case _:
             bufnr.append(f"Invalid client: {params['client']}")
 
-def run_anthropic_thinking(message, end_line, bufnr, params, model, system, hide_thinking, hide_markers, client, self):
+def run_anthropic_thinking(message, end_line, bufnr, params, model, system, hide_thinking, hide_markers, self):
+    self.client = anthropic.Anthropic(api_key=self.config["api_keys"]["anthropic"])
     try:
-        self.stream_cancelled = False
-        with client.messages.stream(
+        with self.client.messages.stream(
             model=model,
             max_tokens=params['max_tokens'],
             system=system,
@@ -63,11 +104,11 @@ def run_anthropic_thinking(message, end_line, bufnr, params, model, system, hide
             # add stream line by line to buffer
             buffer_text = ""
             buffer_lines = []
-
+            self.stopped = False
             for event in stream:
-                if (self.stream_cancelled):
+                if self.stopped:
                     stream.close()
-                    return
+                    break
 
                 if event.type == "content_block_delta":
                     text = None
@@ -98,47 +139,53 @@ def run_anthropic_thinking(message, end_line, bufnr, params, model, system, hide
 
 
             # append remaining lines
-            if buffer_lines:
-                bufnr.append(buffer_lines, end_line)
-                end_line += len(buffer_lines)
-            if buffer_text:
-                bufnr.append(buffer_text, end_line)
-                end_line += 1
-            if not hide_markers:
-                bufnr.append(RESPONSE_END, end_line)
+            if not self.stopped:
+                if buffer_lines:
+                    bufnr.append(buffer_lines, end_line)
+                    end_line += len(buffer_lines)
+                if buffer_text:
+                    bufnr.append(buffer_text, end_line)
+                    end_line += 1
     except anthropic.APIConnectionError as e:
         self.nvim.err_write(f"PyGPT: Anthropic API Connection Error {e.__cause__}\n")
     except anthropic.RateLimitError as e:
         self.nvim.err_write("PyGPT: Anthropic Rate Limit Error\n")
     except anthropic.APIStatusError as e:
         self.nvim.err_write(f"PyGPT: Anthropic Error status={e.status_code} response={e.response}\n")
+    finally:
+        if not hide_markers:
+            bufnr.append(RESPONSE_END, end_line)
+        self.client.close()
 
-def run_anthropic(message, end_line, bufnr, params, model, system, hide_markers, client, self):
+def run_anthropic(message, end_line, bufnr, params, model, system, hide_markers, self):
+    self.client = anthropic.Anthropic(api_key=self.config["api_keys"]["anthropic"])
     try:
-        self.stream_cancelled = False
-        with client.messages.stream(
-            max_tokens=params['max_tokens'],
+        self.stream = self.client.messages.create(
+            max_tokens=params["max_tokens"],
             system=system,
-            temperature=params['temperature'],
-            messages=[
-                {"role": "user", "content": message}
-            ],
+            temperature=params["temperature"],
+            messages=[{"role": "user", "content": message}],
             model=model,
-        ) as stream:
-            bufnr.append("", end_line)
+            stream=True,
+        )
+
+        # add prefix
+        bufnr.append("", end_line)
+        end_line += 1
+        if not hide_markers:
+            bufnr.append(RESPONSE_START, end_line)
             end_line += 1
-            if not hide_markers:
-                bufnr.append(RESPONSE_START, end_line)
-                end_line += 1
 
-            # add stream line by line to buffer
-            buffer_text = ""
-            buffer_lines = []
-            for text in stream.text_stream:
-                if (self.stream_cancelled):
-                    stream.close()
-                    return
+        # add stream line by line to buffer
+        buffer_text = ""
+        buffer_lines = []
+        self.stopped = False
+        for event in self.stream:
+            if self.stopped:
+                break
 
+            if event.type == "content_block_delta":
+                text = event.delta.text
                 buffer_text += text
                 if "\n" in text:
                     lines = buffer_text.split("\n")
@@ -150,7 +197,8 @@ def run_anthropic(message, end_line, bufnr, params, model, system, hide_markers,
                         end_line += len(buffer_lines)
                         buffer_lines = []
 
-            # append remaining lines
+        # append remaining lines
+        if not self.stopped:
             if buffer_lines:
                 bufnr.append(buffer_lines, end_line)
                 end_line += len(buffer_lines)
@@ -158,25 +206,34 @@ def run_anthropic(message, end_line, bufnr, params, model, system, hide_markers,
                 bufnr.append(buffer_text, end_line)
                 end_line += 1
 
-            if not hide_markers:
-                bufnr.append(RESPONSE_END, end_line)
     except anthropic.APIConnectionError as e:
         self.nvim.err_write(f"PyGPT: Anthropic API Connection Error {e.__cause__}\n")
     except anthropic.RateLimitError as e:
         self.nvim.err_write("PyGPT: Anthropic Rate Limit Error\n")
     except anthropic.APIStatusError as e:
-        self.nvim.err_write(f"PyGPT: Anthropic Error status={e.status_code} response={e.response}\n")
+        self.nvim.err_write(
+            f"PyGPT: Anthropic Error status={e.status_code} response={e.response}\n"
+        )
+    finally:
+        if not hide_markers:
+            bufnr.append(RESPONSE_END, end_line)
+        if self.stream is not None:
+            self.stream.close()
+        self.client.close()
 
-def run_openai(message, end_line, bufnr, params, model, system, hide_markers, client, self):
-    response = client.chat.completions.create(
-        max_completion_tokens=params['max_tokens'],
-        temperature=params['temperature'],
+
+def run_openai(
+    message, end_line, bufnr, params, model, system, hide_markers, self
+):
+    self.stream = self.client.chat.completions.create(
+        max_completion_tokens=params["max_tokens"],
+        temperature=params["temperature"],
         messages=[
             {"role": "system", "content": system},
-            {"role": "user", "content": message}
+            {"role": "user", "content": message},
         ],
         model=model,
-        stream=True
+        stream=True,
     )
 
     bufnr.append("", end_line)
@@ -187,9 +244,10 @@ def run_openai(message, end_line, bufnr, params, model, system, hide_markers, cl
 
     buffer_text = ""
     buffer_lines = []
-    for chunk in response:
-        if self.stream_cancelled:
-            return
+    self.stopped = False
+    for chunk in self.stream:
+        if self.stopped:
+            break
 
         content = chunk.choices[0].delta.content
         if content is None:
@@ -206,26 +264,35 @@ def run_openai(message, end_line, bufnr, params, model, system, hide_markers, cl
                 end_line += len(buffer_lines)
                 buffer_lines = []
 
-    if buffer_lines:
-        bufnr.append(buffer_lines, end_line)
-        end_line += len(buffer_lines)
-    if buffer_text:
-        bufnr.append(buffer_text, end_line)
-        end_line += 1
+    if not self.stopped:
+        if buffer_lines:
+            bufnr.append(buffer_lines, end_line)
+            end_line += len(buffer_lines)
+        if buffer_text:
+            bufnr.append(buffer_text, end_line)
+            end_line += 1
+
+    self.stream.close()
+    self.client.close()
 
     if not hide_markers:
         bufnr.append(RESPONSE_END, end_line)
 
-def run_perplexity(message, end_line, bufnr, params, model, system, hide_markers, client, self):
-    response = client.chat.completions.create(
-        max_completion_tokens=params['max_tokens'],
-        temperature=params['temperature'],
+
+def run_perplexity(message, end_line, bufnr, params, model, system, hide_markers, self):
+    self.client = OpenAI(
+        api_key=self.config["api_keys"]["perplexity"],
+        base_url="https://api.perplexity.ai",
+    )
+    self.stream = self.client.chat.completions.create(
+        max_completion_tokens=params["max_tokens"],
+        temperature=params["temperature"],
         messages=[
             {"role": "system", "content": system},
-            {"role": "user", "content": message}
+            {"role": "user", "content": message},
         ],
         model=model,
-        stream=True
+        stream=True,
     )
 
     bufnr.append("", end_line)
@@ -237,9 +304,10 @@ def run_perplexity(message, end_line, bufnr, params, model, system, hide_markers
     buffer_text = ""
     buffer_lines = []
     citations = []
-    for chunk in response:
-        if self.stream_cancelled:
-            return
+    self.stopped = False
+    for chunk in self.stream:
+        if self.stopped:
+            break
 
         buffer_text += chunk.choices[0].delta.content
         if "\n" in buffer_text:
@@ -260,15 +328,18 @@ def run_perplexity(message, end_line, bufnr, params, model, system, hide_markers
         bufnr.append(buffer_text, end_line)
         end_line += 1
 
-    bufnr.append("", end_line)
-    bufnr.append(CITATION_START, end_line+1)
-    end_line += 2
-    for i, citation in enumerate(citations):
-        bufnr.append(f" - [{i+1}]: " + citation, end_line)
+    if not self.stopped:
+        bufnr.append("", end_line)
+        bufnr.append(CITATION_START, end_line + 1)
+        end_line += 2
+        for i, citation in enumerate(citations):
+            bufnr.append(f" - [{i+1}]: " + citation, end_line)
+            end_line += 1
+        bufnr.append(CITATION_END, end_line)
         end_line += 1
-    bufnr.append(CITATION_END, end_line)
-    end_line += 1
+
+    self.stream.close()
+    self.client.close()
 
     if not hide_markers:
         bufnr.append(RESPONSE_END, end_line)
-
