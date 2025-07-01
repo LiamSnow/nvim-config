@@ -41,24 +41,8 @@ return {
 					}),
 				},
 				window = {
-					completion = {
-						border = "rounded",
-						winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuSel,Search:None",
-					},
-					documentation = {
-						border = "rounded",
-					},
-				},
-			})
-
-			vim.diagnostic.config({
-				float = {
-					focusable = false,
-					style = "minimal",
-					border = "rounded",
-					source = "always",
-					header = "",
-					prefix = "",
+                    completion = cmp.config.window.bordered(),
+                    documentation = cmp.config.window.bordered(),
 				},
 			})
 		end,

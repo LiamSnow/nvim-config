@@ -9,6 +9,22 @@ return {
 		},
 
 		config = function()
+			vim.diagnostic.config({
+				virtual_text = { current_line = true },
+				float = {
+					focusable = true,
+					style = "minimal",
+					border = "rounded",
+					source = "always",
+					header = "",
+					prefix = "",
+				},
+			})
+
+            vim.o.winborder = "rounded"
+
+			require("lspconfig.ui.windows").default_options.border = "rounded"
+
 			local capabilities = vim.tbl_deep_extend(
 				"force",
 				{},
@@ -27,26 +43,11 @@ return {
 					"pyright",
 					"cssls",
 					"html",
-					-- "biome", -- ts, js
-					-- "tsserver",
-					-- "denols",
-					-- "svelte",
-					-- "zls", -- zig
 					"yamlls",
-					-- "matlab_ls",
-					-- "svls", -- sys verilog
-					"dockerls",
-					-- "texlab",
-					-- "clangd",
-					-- "cmake",
-					-- "arduino_language_server",
 					"marksman", -- md
-					-- "terraformls",
 					-- "hyprls"
-					-- "glint",
-					-- "templ",
 					"tinymist",
-					-- "gleam"
+					"ts_ls",
 				},
 				handlers = {
 					function(server_name) -- default handler (optional)

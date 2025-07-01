@@ -75,7 +75,7 @@ return {
                 configs = {
                     claude_basic = {
                         provider = "anthropic",
-                        model = "claude-3-7-sonnet-latest",
+                        model = "claude-sonnet-4-20250514",
                         thinking = false,
                         temperature = 0.2,
                         max_tokens = 4000,
@@ -83,7 +83,7 @@ return {
                     },
                     claude_think_prompt = {
                         provider = "anthropic",
-                        model = "claude-3-7-sonnet-latest",
+                        model = "claude-sonnet-4-20250514",
                         thinking = false,
                         temperature = 0.2,
                         max_tokens = 4000,
@@ -91,7 +91,15 @@ return {
                     },
                     claude_think = {
                         provider = "anthropic",
-                        model = "claude-3-7-sonnet-latest",
+                        model = "claude-sonnet-4-20250514",
+                        thinking = true,
+                        max_tokens = 20000,
+                        -- TODO new prompt
+                        system = "You are a professional AI assistant designed to approach problems methodically. Use examples when relevant."
+                    },
+                    claude_think_opus = {
+                        provider = "anthropic",
+                        model = "claude-opus-4-20250514",
                         thinking = true,
                         max_tokens = 20000,
                         -- TODO new prompt
@@ -99,7 +107,7 @@ return {
                     },
                     claude_think_hidden = {
                         provider = "anthropic",
-                        model = "claude-3-7-sonnet-latest",
+                        model = "claude-sonnet-4-20250514",
                         thinking = true,
                         hide_thinking = true,
                         hide_markers = true,
